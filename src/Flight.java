@@ -6,11 +6,11 @@ public class Flight {
     //A flight number (integer 0- 999)
     private int number;
     //A departure airport
-    private Airports departure;
+    private String departure;
     //A departure date
     private LocalDate departureDate;
     //An arrival airport
-    private Airports arrival;
+    private String arrival;
 
     enum SeatClass {
         First,
@@ -27,7 +27,7 @@ public class Flight {
     // Economy class seats (20 seats, seats 16 - 35)
     private String[] economyClass = new String[20];
 
-    public Flight(int num, Airports departure, Airports arrival, LocalDate date) {
+    public Flight(int num, String departure, String arrival, LocalDate date) {
         setNumber(num);
         setDeparture(departure);
         setArrival(arrival);
@@ -59,18 +59,18 @@ public class Flight {
         this.number = number;
     }
 
-    public Airports getDeparture() {
+    public String getDeparture() {
         return departure;
     }
 
-    public void setDeparture(Airports departure) {
+    public void setDeparture(String departure) {
         this.departure = departure;
     }
 
-    public Airports getArrival() {
+    public String getArrival() {
         return arrival;
     }
-    public void setArrival(Airports arrival) {
+    public void setArrival(String arrival) {
         this.arrival = arrival;
     }
 
