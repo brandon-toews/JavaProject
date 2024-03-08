@@ -45,8 +45,11 @@ public class Flight {
             case Business:
                 setBusinessClass(seatNumber, name);
                 break;
-            default:
+            case Economy:
                 setEconomyClass(seatNumber, name);
+                break;
+            default:
+                break;
         }
 
     }
