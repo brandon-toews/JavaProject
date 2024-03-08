@@ -1,10 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Main extends JFrame {
@@ -12,6 +9,10 @@ public class Main extends JFrame {
     private JButton addFlight;
     private JPanel mainPanel;
     private JList listFlights;
+    private JPanel viewFlights;
+    private JPanel addFlights;
+    private JSplitPane viewAddSplit;
+    private JComboBox arrivalComboBox;
     private DefaultListModel model;
 
     private Graph airportGraph = new Graph("src/airports.csv");
