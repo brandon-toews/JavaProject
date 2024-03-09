@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class Main extends JFrame {
     private JLabel jlLabel;
@@ -33,8 +35,17 @@ public class Main extends JFrame {
     private JLabel flightLabel;
     private JTextField dateTextField;
     private JLabel dateInfoLabel;
-    private JComboBox seatComboBox;
+    private JComboBox classComboBox;
+    private DefaultComboBoxModel seatClassModel;
     private JLabel seatClassLabel;
+    private JComboBox seatsComboBox;
+    private DefaultComboBoxModel seatsModel;
+    private JLabel seatLabel;
+    private JComboBox waitComboBox;
+    private DefaultComboBoxModel waitModel;
+    private JLabel waitLabel;
+    private JButton cancelPassButton;
+    private JButton cancelWaitButton;
     private DefaultListModel model;
     private DefaultComboBoxModel depModel;
     private DefaultComboBoxModel arvModel;
@@ -58,6 +69,9 @@ public class Main extends JFrame {
         arvModel = new DefaultComboBoxModel(airportGraph.getNode(depComboBox.getSelectedItem().toString()).getNeighborNames());
         arvComboBox.setModel(arvModel);
         dateDatePicker.setDateToToday();
+        seatClassModel = new DefaultComboBoxModel(Flight.SeatClass.values());
+        classComboBox.setModel(seatClassModel);
+
 
         addFlight.addActionListener(new ActionListener() {
             @Override
@@ -79,10 +93,25 @@ public class Main extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 int index = listFlights.getSelectedIndex();
                 if (index != -1){
-                    flightTextField.setText(flights.get(index).getNumber() + "");
-                    departureTextField.setText(flights.get(index).getDeparture());
-                    dateTextField.setText(flights.get(index).getDepartureDate() + "");
-                    arvTextField.setText(flights.get(index).getArrival());
+                    Flight selectedFlight = flights.get(index);
+                    flightTextField.setText(selectedFlight.getNumber() + "");
+                    departureTextField.setText(selectedFlight.getDeparture());
+                    dateTextField.setText(selectedFlight.getDepartureDate() + "");
+                    arvTextField.setText(selectedFlight.getArrival());
+                    updateSeats(index);
+                    updateWaitList(index);
+
+                }
+            }
+        });
+        classComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = listFlights.getSelectedIndex();
+                if (index != -1) {
+                    updateSeats(index);
+                    updateWaitList(index);
+
                 }
             }
         });
@@ -116,5 +145,47 @@ public class Main extends JFrame {
             }
         }
 
+    }
+
+    // Function to update the seats combobox
+    public void updateSeats(int index) {
+        Flight selectedFlight = flights.get(index);
+        // Store available spots in seats
+        HashMap<Integer, String> seatHashMap = selectedFlight.getSeats(Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()));
+        // Combine the keys and values of the hashmap into a single string
+        String[] seatArray = new String[seatHashMap.size()];
+        // store the keys of the hashmap in an array
+        Object[] keys = seatHashMap.keySet().toArray();
+        // Sort the keys
+        Arrays.sort(keys);
+        // Add the sorted keys and values to the seatArray
+        for (int i = 0; i < keys.length; i++) {
+            seatArray[i] = keys[i] + ": " + seatHashMap.get(keys[i]);
+        }
+        // Set the model of the seatsComboBox to the new array of seats
+        seatsModel = new DefaultComboBoxModel(seatArray);
+        // Set the model of the seatsComboBox to the new model
+        seatsComboBox.setModel(seatsModel);
+    }
+
+    // Function to update waitlist combobox
+    public void updateWaitList(int index) {
+        Flight selectedFlight = flights.get(index);
+        // Store available spots in waitlist
+        HashMap<Integer, String> waitHashMap = selectedFlight.getWait(Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()));
+        // Combine the keys and values of the hashmap into a single string
+        String[] waitArray = new String[waitHashMap.size()];
+        // store the keys of the hashmap in an array
+        Object[] waitKeys = waitHashMap.keySet().toArray();
+        // Sort the keys
+        Arrays.sort(waitKeys);
+        // Add the sorted keys and values to the waitArray
+        for (int i = 0; i < waitKeys.length; i++) {
+            waitArray[i] = waitKeys[i] + ": " + waitHashMap.get(waitKeys[i]);
+        }
+        // Set the model of the waitComboBox to the new array of waitlist
+        waitModel = new DefaultComboBoxModel(waitArray);
+        // Set the model of the waitComboBox to the new model
+        waitComboBox.setModel(waitModel);
     }
 }
