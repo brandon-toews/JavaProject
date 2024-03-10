@@ -46,13 +46,27 @@ public class Main extends JFrame {
     private JLabel waitLabel;
     private JButton cancelPassButton;
     private JButton cancelWaitButton;
+    private JPanel viewInfo;
+    private JLabel passStatusLabel;
+    private JPanel viewPassStatus;
+    private JLabel fNameLabel;
+    private JTextField firstNameTextField;
+    private JLabel lNameLabel;
+    private JTextField lastNameTextField;
+    private JLabel passLabel;
+    private JTextField passTextField;
     private DefaultListModel model;
     private DefaultComboBoxModel depModel;
     private DefaultComboBoxModel arvModel;
 
+    // Create a graph of airports
     private Graph airportGraph = new Graph("src/airports.csv");
-
+    // Create a list of flights
     public ArrayList<Flight> flights = new ArrayList<Flight>();
+
+    // Create a list of passengers
+    public ArrayList<Passenger> passengers = new ArrayList<Passenger>();
+
     public Main(){
         setContentPane(mainPanel);
         setTitle("Flight Scheduler");
