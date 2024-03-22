@@ -87,6 +87,15 @@ public class Main extends JFrame {
         classComboBox.setModel(seatClassModel);
 
 
+        int [] numArray = {5, 1, 5, 4, 2, 3, 0};
+
+        // Create a binary tree
+        BinaryTree tree = new BinaryTree(numArray);
+
+        // Print the tree
+        tree.printTree();
+
+
         addFlight.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

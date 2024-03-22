@@ -58,6 +58,22 @@ public class BinaryNode {
 
     public void setChildren(int[] numArray){
 
+        if (numArray.length > 2){
+            int half = numArray.length / 2;
+
+            setLeftNode(new BinaryNode(numArray[0], String.valueOf(numArray[0])));
+            setRightNode(new BinaryNode(numArray[half], String.valueOf(numArray[half])));
+
+            getLeftNode().setChildren(Arrays.copyOfRange(numArray, 1, half));
+            getRightNode().setChildren(Arrays.copyOfRange(numArray, half + 1, numArray.length));
+        } else if (numArray.length == 2){
+            setLeftNode(new BinaryNode(numArray[0], String.valueOf(numArray[0])));
+            setRightNode(new BinaryNode(numArray[1], String.valueOf(numArray[1])));
+        } else {
+            setLeftNode(new BinaryNode(numArray[0], String.valueOf(numArray[0])));
+        }
+
+        /*
         int depth = (int)(Math.log(numArray.length) / Math.log(2));
 
         setLeftNode(new BinaryNode(numArray[0], String.valueOf(numArray[0])));
@@ -70,6 +86,8 @@ public class BinaryNode {
             getLeftNode().setChildren(Arrays.copyOfRange(numArray, 2, numArray.length));
             getRightNode();
         }
+        */
 
     }
+
 }
