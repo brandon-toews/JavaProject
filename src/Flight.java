@@ -76,6 +76,55 @@ public class Flight {
 
     }
 
+    public void AddPassengerToWait(SeatClass seatClass, int waitNumber, String name){
+        switch(seatClass) {
+            case First:
+                setFirstWait(waitNumber, name);
+                break;
+            case Business:
+                setBusinessWait(waitNumber, name);
+                break;
+            case Economy:
+                setEconomyWait(waitNumber, name);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    public void RemovePassenger(SeatClass seatClass, int seatNumber){
+        switch(seatClass) {
+            case First:
+                firstClass.put(seatNumber, "Available");
+                break;
+            case Business:
+                businessClass.put(seatNumber, "Available");
+                break;
+            case Economy:
+                economyClass.put(seatNumber, "Available");
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void RemovePassengerFromWait(SeatClass seatClass, int waitNumber){
+        switch(seatClass) {
+            case First:
+                firstWait.put(waitNumber, " ");
+                break;
+            case Business:
+                businessWait.put(waitNumber, " ");
+                break;
+            case Economy:
+                economyWait.put(waitNumber, " ");
+                break;
+            default:
+                break;
+        }
+    }
+
     public int getNumber() {
         return number;
     }
@@ -110,6 +159,17 @@ public class Flight {
         this.firstClass.put(index, firstClass);
     }
 
+    public void setFirstWait(int index, String firstWait) {
+        this.firstWait.put(index, firstWait);
+    }
+
+    public void setBusinessWait(int index, String businessWait) {
+        this.businessWait.put(index, businessWait);
+    }
+
+    public void setEconomyWait(int index, String economyWait) {
+        this.economyWait.put(index, economyWait);
+    }
     public void setBusinessClass(int index, String businessClass) {
         this.businessClass.put(index, businessClass);
     }
@@ -121,11 +181,11 @@ public class Flight {
     public HashMap<Integer, String> getSeats(SeatClass seatClass){
         switch(seatClass) {
             case First:
-                return firstClass;
+                return this.firstClass;
             case Business:
-                return businessClass;
+                return this.businessClass;
             case Economy:
-                return economyClass;
+                return this.economyClass;
             default:
                 return null;
         }
@@ -134,11 +194,11 @@ public class Flight {
     public HashMap<Integer, String> getWait(SeatClass seatClass){
         switch(seatClass) {
             case First:
-                return firstWait;
+                return this.firstWait;
             case Business:
-                return businessWait;
+                return this.businessWait;
             case Economy:
-                return economyWait;
+                return this.economyWait;
             default:
                 return null;
         }

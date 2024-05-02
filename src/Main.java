@@ -8,7 +8,11 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Main extends JFrame {
     private JLabel jlLabel;
@@ -53,8 +57,17 @@ public class Main extends JFrame {
     private JTextField firstNameTextField;
     private JLabel lNameLabel;
     private JTextField lastNameTextField;
-    private JLabel passLabel;
-    private JTextField passTextField;
+    private JLabel passportLabel;
+    private JTextField passportTextField;
+    private JTextField passFlightTextField;
+    private JLabel passFlightLabel;
+    private JLabel passSeatClassLabel;
+    private JTextField passSeatClassTextField;
+    private JLabel passSeatNumberLabel;
+    private JTextField passSeatNumbertextField;
+    private JCheckBox onWaitListCheckBox;
+    private JLabel passWaitListNumberLabel;
+    private JTextField passWaitListTextField;
     private DefaultListModel model;
     private DefaultComboBoxModel depModel;
     private DefaultComboBoxModel arvModel;
@@ -65,7 +78,10 @@ public class Main extends JFrame {
     public ArrayList<Flight> flights = new ArrayList<Flight>();
 
     // Create a list of passengers
-    public ArrayList<Passenger> passengers = new ArrayList<Passenger>();
+    //public ArrayList<Passenger> passengers = new ArrayList<Passenger>();
+
+    // Create a file folder to store passengers
+    public FileFolder passengers = new FileFolder();
 
     public Main(){
         setContentPane(mainPanel);
@@ -77,7 +93,8 @@ public class Main extends JFrame {
         model = new DefaultListModel();
         listFlights.setModel(model);
         //listFlights = new JComboBox();
-        generateFlights(200);
+        generateFlights(20);
+        generatePassengers("src/passengers.csv");
         depModel = new DefaultComboBoxModel(airportGraph.getMyNodes().keySet().toArray());
         depComboBox.setModel(depModel);
         arvModel = new DefaultComboBoxModel(airportGraph.getNode(depComboBox.getSelectedItem().toString()).getNeighborNames());
@@ -138,6 +155,40 @@ public class Main extends JFrame {
                 }
             }
         });
+        seatsComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (seatsComboBox.getSelectedItem() != null){
+                    String seat = seatsComboBox.getSelectedItem().toString();
+                    String[] seatArray = seat.split(": ");
+                    updatePassengerStatus(seatArray[1], Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(seatArray[0]), false);
+
+                    //JOptionPane.showMessageDialog(Main.this, seatArray[1]);
+                }
+            }
+        });
+        waitComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String wait = waitComboBox.getSelectedItem().toString();
+                String[] waitArray = wait.split(": ");
+                updatePassengerStatus(waitArray[1], Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]), true);
+            }
+        });
+        cancelWaitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Flight selectedFlight = flights.get(listFlights.getSelectedIndex());
+                String wait = waitComboBox.getSelectedItem().toString();
+                String[] waitArray = wait.split(": ");
+                if (waitArray[1].length() != 1){
+                    selectedFlight.RemovePassengerFromWait(Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]));
+                    passengers.removeFile(waitArray[1], Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]), true);
+                    updateWaitList(listFlights.getSelectedIndex());
+                    updatePassengerStatus(" ", Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]), true);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -168,6 +219,100 @@ public class Main extends JFrame {
             }
         }
 
+    }
+
+    public void generatePassengers(String csvFile){
+        // Read the csv file
+        List<List<String>> records = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                records.add(Arrays.asList(values));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        int flight = 0;
+        int seatNumber = 1;
+        int waitNumber = 0;
+        Flight.SeatClass seatClass;
+
+        // For each row, create a passenger
+        for(int i = 1; i < records.size(); i++){
+            Flight selectedFlight = flights.get(flight);
+            // If the seat number is greater than 35, move to the next flight
+            if (seatNumber > 35 && waitNumber > 20){
+                flight++;
+                seatNumber = 1;
+
+
+            }
+            // Determine the seat class based on the seat number
+            if (seatNumber<=5 && waitNumber<=5) {
+                if (seatNumber < 5) {
+                    selectedFlight.AddPassenger(Flight.SeatClass.First, seatNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.First, seatNumber, false);
+                    passengers.addFile(newPassenger);
+                    seatNumber++;
+                } else if (seatNumber == 5 && waitNumber == 0){
+                    selectedFlight.AddPassenger(Flight.SeatClass.First, seatNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.First, seatNumber, false);
+                    passengers.addFile(newPassenger);
+                    waitNumber++;
+                } else {
+                    selectedFlight.AddPassengerToWait(Flight.SeatClass.First, waitNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.First, waitNumber, true);
+                    passengers.addFile(newPassenger);
+                    waitNumber++;
+                    if (waitNumber > 5){
+                        seatNumber = 6;
+                        waitNumber = 0;
+                    }
+                }
+            } else if (seatNumber>5 && seatNumber<=15 && waitNumber<=10){
+                if (seatNumber < 15){
+                    selectedFlight.AddPassenger(Flight.SeatClass.Business, seatNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.Business, seatNumber, false);
+                    passengers.addFile(newPassenger);
+                    seatNumber++;
+                } else if (seatNumber == 15 && waitNumber == 0){
+                    selectedFlight.AddPassenger(Flight.SeatClass.Business, seatNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.Business, seatNumber, false);
+                    passengers.addFile(newPassenger);
+                    waitNumber++;
+                } else {
+                    selectedFlight.AddPassengerToWait(Flight.SeatClass.Business, waitNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.Business, waitNumber, true);
+                    passengers.addFile(newPassenger);
+                    waitNumber++;
+                    if (waitNumber > 10){
+                        seatNumber = 16;
+                        waitNumber = 1;
+                    }
+                }
+            } else {
+                if (seatNumber < 36){
+                    selectedFlight.AddPassenger(Flight.SeatClass.Economy, seatNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.Economy, seatNumber, false);
+                    passengers.addFile(newPassenger);
+                    seatNumber++;
+                } else {
+                    selectedFlight.AddPassengerToWait(Flight.SeatClass.Economy, waitNumber, records.get(i).get(0) + " " + records.get(i).get(1));
+                    Passenger newPassenger = new Passenger(records.get(i).get(0), records.get(i).get(1), records.get(i).get(2), flight, Flight.SeatClass.Economy, waitNumber, true);
+                    passengers.addFile(newPassenger);
+                    waitNumber++;
+                    if (waitNumber > 20){
+                        flight++;
+                        seatNumber = 1;
+                        waitNumber = 0;
+                    }
+                }
+            }
+
+
+
+        }
     }
 
     // Function to update the seats combobox
@@ -210,5 +355,37 @@ public class Main extends JFrame {
         waitModel = new DefaultComboBoxModel(waitArray);
         // Set the model of the waitComboBox to the new model
         waitComboBox.setModel(waitModel);
+    }
+
+    public void updatePassengerStatus(String passengerName, int flightNumber, Flight.SeatClass seatClass, int seatNumber, boolean isWaitListed){
+        switch (passengerName) {
+            case "Available":
+            case " ":
+                firstNameTextField.setText(" ");
+                lastNameTextField.setText(" ");
+                passportTextField.setText(" ");
+                passFlightTextField.setText(" ");
+                passSeatClassTextField.setText(" ");
+                onWaitListCheckBox.setSelected(false);
+                passWaitListTextField.setText(" ");
+                passSeatNumbertextField.setText(" ");
+                break;
+            default:
+                //Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber
+                Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber, isWaitListed);
+                firstNameTextField.setText(selectedPassenger.getFirstName());
+                lastNameTextField.setText(selectedPassenger.getLastName());
+                passportTextField.setText(selectedPassenger.getPassport());
+                passFlightTextField.setText(selectedPassenger.getFlightNumber() + "");
+                passSeatClassTextField.setText(selectedPassenger.getSeatClass().toString());
+                onWaitListCheckBox.setSelected(selectedPassenger.getIsWaitListed());
+                if (onWaitListCheckBox.isSelected()) {
+                    passWaitListTextField.setText(selectedPassenger.getSeatWaitNumber() + "");
+                    passSeatNumbertextField.setText(" ");
+                } else {
+                    passSeatNumbertextField.setText(selectedPassenger.getSeatWaitNumber() + "");
+                    passWaitListTextField.setText(" ");
+                }
+        }
     }
 }
