@@ -187,17 +187,49 @@ public class Main extends JFrame {
                     int currentFlightNumber = selectedFlight.getNumber();
                     selectedFlight.RemovePassengerFromWait(currentSeatClass, waitNumber);
                     passengers.removeFile(wait, currentFlightNumber, currentSeatClass, waitNumber, true);
-                    for (int i = waitNumber; i < waitComboBox.getItemCount(); i++){
+                    moveWaitSeatsUp(waitNumber, currentFlightNumber, currentSeatClass);
+                    /*for (int i = waitNumber; i < waitComboBox.getItemCount(); i++){
                         String selectedPassengerName = waitComboBox.getItemAt(i).toString();
                         if (selectedPassengerName.length() != 1){
                             Passenger selectedPassenger = passengers.getFile(selectedPassengerName, currentFlightNumber, currentSeatClass, i+1, true);
                             selectedPassenger.setSeatWaitNumber(i);
                         }
-                    }
+                    }*/
                     updateWaitList(listFlights.getSelectedIndex());
                     //wait = waitComboBox.getSelectedItem().toString();
 
                     updatePassengerStatus(" ", currentFlightNumber, currentSeatClass, waitComboBox.getSelectedIndex()+1, true);
+                }
+            }
+        });
+        cancelPassButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Flight selectedFlight = flights.get(listFlights.getSelectedIndex());
+                String seat = seatsComboBox.getSelectedItem().toString();
+                int index = seatsComboBox.getSelectedIndex();
+                String[] seatArray = seat.split(": ");
+                if (seatArray[1] != "Available") {
+                    int seatNumber = Integer.parseInt(seatArray[0]);
+                    Flight.SeatClass currentSeatClass = Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString());
+                    int currentFlightNumber = selectedFlight.getNumber();
+                    selectedFlight.RemovePassenger(currentSeatClass, seatNumber);
+                    passengers.removeFile(seatArray[1], currentFlightNumber, currentSeatClass, seatNumber, false);
+                    if (selectedFlight.getWait(currentSeatClass).getSize() > 0){
+                        int response = JOptionPane.showConfirmDialog(Main.this,
+                            "Would you like to move "+waitComboBox.getItemAt(0)+" from the waitlist to the available seat?",
+                            "Move Passenger", JOptionPane.YES_NO_OPTION);
+                        if (response == 0){
+                            selectedFlight.movePassengerFromWaitToSeat(currentSeatClass, seatNumber);
+                            Passenger selectedPassenger = passengers.getFile(waitComboBox.getItemAt(0).toString(), currentFlightNumber, currentSeatClass, 1, true);
+                            selectedPassenger.setSeatWaitNumber(seatNumber);
+                            selectedPassenger.setIsWaitListed(false);
+                            moveWaitSeatsUp(1, currentFlightNumber, currentSeatClass);
+                            updateWaitList(listFlights.getSelectedIndex());
+                        }
+                        updateSeats(listFlights.getSelectedIndex());
+                        seatsComboBox.setSelectedIndex(index);
+                    }
                 }
             }
         });
@@ -324,6 +356,16 @@ public class Main extends JFrame {
 
 
 
+        }
+    }
+
+    public void moveWaitSeatsUp(int index, int currentFlightNumber, Flight.SeatClass currentSeatClass){
+        for (int i = index; i < waitComboBox.getItemCount(); i++){
+            String selectedPassengerName = waitComboBox.getItemAt(i).toString();
+            if (selectedPassengerName.length() != 1){
+                Passenger selectedPassenger = passengers.getFile(selectedPassengerName, currentFlightNumber, currentSeatClass, i+1, true);
+                selectedPassenger.setSeatWaitNumber(i);
+            }
         }
     }
 
