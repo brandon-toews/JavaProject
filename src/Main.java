@@ -68,6 +68,16 @@ public class Main extends JFrame {
     private JCheckBox onWaitListCheckBox;
     private JLabel passWaitListNumberLabel;
     private JTextField passWaitListTextField;
+    private JButton schedPassButton;
+    private JLabel searchLabel;
+    private JTextField firstNameSearchTextBox;
+    private JLabel firstNameSearchLabel;
+    private JLabel lastNameSearchLabel;
+    private JTextField lastNameSearchTextBox;
+    private JButton searchButton;
+    private JList searchedList;
+    private JScrollPane scrollSearchedPassengers;
+    private JLabel schedPassLabel;
     private DefaultListModel model;
     private DefaultComboBoxModel depModel;
     private DefaultComboBoxModel arvModel;
@@ -87,7 +97,7 @@ public class Main extends JFrame {
         setContentPane(mainPanel);
         setTitle("Flight Scheduler");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(900,600);
+        setSize(1100,600);
         setLocationRelativeTo(null);
         setVisible(true);
         model = new DefaultListModel();
@@ -170,9 +180,12 @@ public class Main extends JFrame {
         waitComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String wait = waitComboBox.getSelectedItem().toString();
-                //String[] waitArray = wait.split(": ");
-                updatePassengerStatus(wait, Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), waitComboBox.getSelectedIndex()+1, true);
+                if (waitComboBox.getSelectedItem() != null) {
+                    String wait = waitComboBox.getSelectedItem().toString();
+                    updatePassengerStatus(wait, Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), waitComboBox.getSelectedIndex() + 1, true);
+                } else {
+                    updatePassengerStatus(" ", Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), waitComboBox.getSelectedIndex() + 1, true);
+                }
             }
         });
         cancelWaitButton.addActionListener(new ActionListener() {
@@ -231,6 +244,12 @@ public class Main extends JFrame {
                         seatsComboBox.setSelectedIndex(index);
                     }
                 }
+            }
+        });
+        schedPassButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showInputDialog(Main.this, "Hello");
             }
         });
     }
@@ -416,8 +435,11 @@ public class Main extends JFrame {
             case "Available":
             case " ":
                 firstNameTextField.setText(" ");
+                firstNameTextField.setEditable(true);
                 lastNameTextField.setText(" ");
+                lastNameTextField.setEditable(true);
                 passportTextField.setText(" ");
+                passportTextField.setEditable(true);
                 passFlightTextField.setText(" ");
                 passSeatClassTextField.setText(" ");
                 onWaitListCheckBox.setSelected(false);
@@ -427,8 +449,11 @@ public class Main extends JFrame {
             default:
                 //Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber
                 Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber, isWaitListed);
+                firstNameTextField.setEditable(false);
                 firstNameTextField.setText(selectedPassenger.getFirstName());
+                lastNameTextField.setEditable(false);
                 lastNameTextField.setText(selectedPassenger.getLastName());
+                passportTextField.setEditable(false);
                 passportTextField.setText(selectedPassenger.getPassport());
                 passFlightTextField.setText(selectedPassenger.getFlightNumber() + "");
                 passSeatClassTextField.setText(selectedPassenger.getSeatClass().toString());
