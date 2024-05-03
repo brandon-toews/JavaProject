@@ -171,8 +171,8 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String wait = waitComboBox.getSelectedItem().toString();
-                String[] waitArray = wait.split(": ");
-                updatePassengerStatus(waitArray[1], Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]), true);
+                //String[] waitArray = wait.split(": ");
+                updatePassengerStatus(wait, Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), waitComboBox.getSelectedIndex()+1, true);
             }
         });
         cancelWaitButton.addActionListener(new ActionListener() {
@@ -180,12 +180,24 @@ public class Main extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Flight selectedFlight = flights.get(listFlights.getSelectedIndex());
                 String wait = waitComboBox.getSelectedItem().toString();
-                String[] waitArray = wait.split(": ");
-                if (waitArray[1].length() != 1){
-                    selectedFlight.RemovePassengerFromWait(Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]));
-                    passengers.removeFile(waitArray[1], Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]), true);
+                //String[] waitArray = wait.split(": ");
+                if (wait.length() != 1){
+                    int waitNumber = waitComboBox.getSelectedIndex()+1;
+                    Flight.SeatClass currentSeatClass = Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString());
+                    int currentFlightNumber = selectedFlight.getNumber();
+                    selectedFlight.RemovePassengerFromWait(currentSeatClass, waitNumber);
+                    passengers.removeFile(wait, currentFlightNumber, currentSeatClass, waitNumber, true);
+                    for (int i = waitNumber; i < waitComboBox.getItemCount(); i++){
+                        String selectedPassengerName = waitComboBox.getItemAt(i).toString();
+                        if (selectedPassengerName.length() != 1){
+                            Passenger selectedPassenger = passengers.getFile(selectedPassengerName, currentFlightNumber, currentSeatClass, i+1, true);
+                            selectedPassenger.setSeatWaitNumber(i);
+                        }
+                    }
                     updateWaitList(listFlights.getSelectedIndex());
-                    updatePassengerStatus(" ", Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(waitArray[0]), true);
+                    //wait = waitComboBox.getSelectedItem().toString();
+
+                    updatePassengerStatus(" ", currentFlightNumber, currentSeatClass, waitComboBox.getSelectedIndex()+1, true);
                 }
             }
         });
@@ -340,9 +352,9 @@ public class Main extends JFrame {
     public void updateWaitList(int index) {
         Flight selectedFlight = flights.get(index);
         // Store available spots in waitlist
-        HashMap<Integer, String> waitHashMap = selectedFlight.getWait(Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()));
+        Queue waitHashMap = selectedFlight.getWait(Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()));
         // Combine the keys and values of the hashmap into a single string
-        String[] waitArray = new String[waitHashMap.size()];
+        /*String[] waitArray = new String[waitHashMap.getSize()];
         // store the keys of the hashmap in an array
         Object[] waitKeys = waitHashMap.keySet().toArray();
         // Sort the keys
@@ -350,9 +362,9 @@ public class Main extends JFrame {
         // Add the sorted keys and values to the waitArray
         for (int i = 0; i < waitKeys.length; i++) {
             waitArray[i] = waitKeys[i] + ": " + waitHashMap.get(waitKeys[i]);
-        }
+        }*/
         // Set the model of the waitComboBox to the new array of waitlist
-        waitModel = new DefaultComboBoxModel(waitArray);
+        waitModel = new DefaultComboBoxModel(waitHashMap.getQueue());
         // Set the model of the waitComboBox to the new model
         waitComboBox.setModel(waitModel);
     }
