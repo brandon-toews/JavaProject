@@ -23,7 +23,7 @@ public class Queue {
             for(int i = 0; i < currentAmount - 1; i++){
                 queue[i] = queue[i + 1];
             }
-            queue[currentAmount - 1] = " ";
+            queue[currentAmount - 1] = null;
             currentAmount--;
             return name;
         } else {
@@ -38,7 +38,7 @@ public class Queue {
             for(int i = index; i < currentAmount - 1; i++){
                 queue[i] = queue[i + 1];
             }
-            queue[currentAmount - 1] = " ";
+            queue[currentAmount - 1] = null;
             currentAmount--;
             return name;
         } else {

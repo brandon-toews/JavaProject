@@ -89,7 +89,8 @@ public class Main extends JFrame {
     private JTextField schedLastNameTextField;
     private JLabel schedFirstNameLabel;
     private JTextField schedFirstNameTextField;
-    private DefaultListModel model;
+    private DefaultListModel flightListModel;
+    private DefaultListModel searchModel;
     private DefaultComboBoxModel depModel;
     private DefaultComboBoxModel arvModel;
 
@@ -115,8 +116,10 @@ public class Main extends JFrame {
         setSize(1100,600);
         setLocationRelativeTo(null);
         setVisible(true);
-        model = new DefaultListModel();
-        listFlights.setModel(model);
+        flightListModel = new DefaultListModel();
+        listFlights.setModel(flightListModel);
+        searchModel = new DefaultListModel();
+        searchedList.setModel(searchModel);
         //listFlights = new JComboBox();
         generateFlights(20);
         generatePassengers("src/passengers.csv");
@@ -281,13 +284,15 @@ public class Main extends JFrame {
                         selectedFlight.AddPassenger(selectedSeatClass, seatNumber, firstName + " " + lastName);
                         Passenger newPassenger = new Passenger(firstName, lastName, schedPassportTextField.getText(), selectedFlight.getNumber(), selectedSeatClass, seatNumber, false);
                         passengers.addFile(newPassenger);
-                        updateSeats(schedPassFlightComboBox.getSelectedIndex());
+                        if (selectedFlight.getNumber() == listFlights.getSelectedIndex()) {
+                            updateSeats(schedPassFlightComboBox.getSelectedIndex());
+                        }
                     }
                 } else {
                     String[] selectedWaitList = selectedFlight.getWait(selectedSeatClass).getQueue();
                     boolean noSeatsAvailable = true;
                     for (int i = 0; i < selectedWaitList.length; i++){
-                        if (selectedWaitList[i] == " "){
+                        if (selectedWaitList[i] == null){
                             int response = JOptionPane.showConfirmDialog(Main.this,
                                     "All seats for in this seat class are already reserved, would you like to be put on the wait list?",
                                     "Join Wait List", JOptionPane.YES_NO_OPTION);
@@ -299,7 +304,9 @@ public class Main extends JFrame {
                                 selectedFlight.AddPassengerToWait(selectedSeatClass, i+1, firstName + " " + lastName);
                                 Passenger newPassenger = new Passenger(firstName, lastName, schedPassportTextField.getText(), selectedFlight.getNumber(), selectedSeatClass, i+1, true);
                                 passengers.addFile(newPassenger);
-                                updateWaitList(schedPassFlightComboBox.getSelectedIndex());
+                                if (selectedFlight.getNumber() == listFlights.getSelectedIndex()) {
+                                    updateWaitList(schedPassFlightComboBox.getSelectedIndex());
+                                }
                                 JOptionPane.showMessageDialog(Main.this, "You are number "+(i+1)+" on the wait list.");
                             }
                             noSeatsAvailable = false;
@@ -312,6 +319,36 @@ public class Main extends JFrame {
                     }
                 }
 
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String firstName = firstNameSearchTextBox.getText();
+                firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1).toLowerCase();
+                String lastName = lastNameSearchTextBox.getText();
+                lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).toLowerCase();
+                String[] foundPassengers = passengers.getFiles(firstName, lastName);
+                JOptionPane.showMessageDialog(Main.this, "Found "+foundPassengers.length+" passengers.");
+                for (int i = 0; i < foundPassengers.length; i++){
+                    searchModel.add(i, foundPassengers[i]);
+                }
+            }
+        });
+        searchedList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int index = searchedList.getSelectedIndex();
+                if (index != -1){
+                    String selectedPassenger = searchedList.getSelectedValue().toString();
+                    String[] selectedPassengerArray = selectedPassenger.split(", ");
+                    String[] selectedPassengerName = selectedPassengerArray[0].split(": ");
+                    String[] selectedFlightNumber = selectedPassengerArray[1].split(": ");
+                    String[] selectedSeatClass = selectedPassengerArray[2].split(": ");
+                    String[] selectedSeatNumber = selectedPassengerArray[3].split(": ");
+                    String[] selectedWaitListNumber = selectedPassengerArray[4].split(": ");
+                    updatePassengerStatus(selectedPassengerName[1], Integer.parseInt(selectedFlightNumber[1]), Flight.SeatClass.valueOf(selectedSeatClass[1]), Integer.parseInt(selectedSeatNumber[1]), Boolean.parseBoolean(selectedWaitListNumber[1]));
+                }
             }
         });
     }
@@ -346,7 +383,7 @@ public class Main extends JFrame {
     // Function to instantiate flight objects in flights and add them to the listFlights
     public void addFlight(int num, String departure, String arrival, LocalDate date){
         flights.add(new Flight(num, departure, arrival, date));
-        model.add(num, "#: " + flights.get(num).getNumber() + ", From: " + flights.get(num).getDeparture() + ", To: " + flights.get(num).getArrival() + ", On: " + flights.get(num).getDepartureDate());
+        flightListModel.add(num, "#: " + flights.get(num).getNumber() + ", From: " + flights.get(num).getDeparture() + ", To: " + flights.get(num).getArrival() + ", On: " + flights.get(num).getDepartureDate());
         updateScheduleFlightComboBox();
     }
 
