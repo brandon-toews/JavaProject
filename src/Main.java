@@ -1,3 +1,4 @@
+// Import the necessary libraries
 import com.github.lgooddatepicker.components.DatePicker;
 
 import javax.swing.*;
@@ -14,7 +15,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+// Create the Main class
 public class Main extends JFrame {
+    // Create the GUI components
     private JLabel jlLabel;
     private JButton addFlight;
     private JPanel mainPanel;
@@ -64,7 +67,7 @@ public class Main extends JFrame {
     private JLabel passSeatClassLabel;
     private JTextField passSeatClassTextField;
     private JLabel passSeatNumberLabel;
-    private JTextField passSeatNumbertextField;
+    private JTextField passSeatNumberTextField;
     private JCheckBox onWaitListCheckBox;
     private JLabel passWaitListNumberLabel;
     private JTextField passWaitListTextField;
@@ -93,9 +96,7 @@ public class Main extends JFrame {
     private DefaultListModel searchModel;
     private DefaultComboBoxModel depModel;
     private DefaultComboBoxModel arvModel;
-
     private DefaultComboBoxModel schedPassFlightModel;
-
     private String[] flightIndices;
 
     // Create a graph of airports
@@ -103,14 +104,14 @@ public class Main extends JFrame {
     // Create a list of flights
     public ArrayList<Flight> flights = new ArrayList<Flight>();
 
-    // Create a list of passengers
-    //public ArrayList<Passenger> passengers = new ArrayList<Passenger>();
-
     // Create a file folder to store passengers
     public FileFolder passengers = new FileFolder();
 
+    // Create the Main constructor
     public Main(){
+        // Set the main panel
         setContentPane(mainPanel);
+        // Set the title of the window
         setTitle("Flight Scheduler");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1100,600);
@@ -120,7 +121,6 @@ public class Main extends JFrame {
         listFlights.setModel(flightListModel);
         searchModel = new DefaultListModel();
         searchedList.setModel(searchModel);
-        //listFlights = new JComboBox();
         generateFlights(20);
         generatePassengers("src/passengers.csv");
         depModel = new DefaultComboBoxModel(airportGraph.getMyNodes().keySet().toArray());
@@ -135,16 +135,6 @@ public class Main extends JFrame {
         listFlights.setSelectedIndex(0);
         updateFlightInfo(0);
         updateScheduleFlightComboBox();
-
-
-        int [] numArray = {5, 1, 5, 4, 2, 3, 0};
-
-        // Create a binary tree
-        BinaryTree tree = new BinaryTree(numArray);
-
-        // Print the tree
-        tree.printTree();
-
 
         addFlight.addActionListener(new ActionListener() {
             @Override
@@ -186,8 +176,6 @@ public class Main extends JFrame {
                     String seat = seatsComboBox.getSelectedItem().toString();
                     String[] seatArray = seat.split(": ");
                     updatePassengerStatus(seatArray[1], Integer.parseInt(flightTextField.getText()), Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()), Integer.parseInt(seatArray[0]), false);
-
-                    //JOptionPane.showMessageDialog(Main.this, seatArray[1]);
                 }
             }
         });
@@ -205,26 +193,18 @@ public class Main extends JFrame {
         cancelWaitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Flight selectedFlight = flights.get(listFlights.getSelectedIndex());
-                String wait = waitComboBox.getSelectedItem().toString();
-                //String[] waitArray = wait.split(": ");
-                if (wait.length() != 1){
+                if (waitComboBox.getSelectedItem() != null){
+                    Flight selectedFlight = flights.get(listFlights.getSelectedIndex());
+                    String wait = waitComboBox.getSelectedItem().toString();
+                    //String[] waitArray = wait.split(": ");
+
                     int waitNumber = waitComboBox.getSelectedIndex()+1;
                     Flight.SeatClass currentSeatClass = Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString());
                     int currentFlightNumber = selectedFlight.getNumber();
                     selectedFlight.RemovePassengerFromWait(currentSeatClass, waitNumber);
                     passengers.removeFile(wait, currentFlightNumber, currentSeatClass, waitNumber, true);
                     moveWaitSeatsUp(waitNumber, currentFlightNumber, currentSeatClass);
-                    /*for (int i = waitNumber; i < waitComboBox.getItemCount(); i++){
-                        String selectedPassengerName = waitComboBox.getItemAt(i).toString();
-                        if (selectedPassengerName.length() != 1){
-                            Passenger selectedPassenger = passengers.getFile(selectedPassengerName, currentFlightNumber, currentSeatClass, i+1, true);
-                            selectedPassenger.setSeatWaitNumber(i);
-                        }
-                    }*/
                     updateWaitList(listFlights.getSelectedIndex());
-                    //wait = waitComboBox.getSelectedItem().toString();
-
                     updatePassengerStatus(" ", currentFlightNumber, currentSeatClass, waitComboBox.getSelectedIndex()+1, true);
                 }
             }
@@ -236,13 +216,13 @@ public class Main extends JFrame {
                 String seat = seatsComboBox.getSelectedItem().toString();
                 int index = seatsComboBox.getSelectedIndex();
                 String[] seatArray = seat.split(": ");
-                if (seatArray[1] != "Available") {
+                if (!seatArray[1].equals("Available")) {
                     int seatNumber = Integer.parseInt(seatArray[0]);
                     Flight.SeatClass currentSeatClass = Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString());
                     int currentFlightNumber = selectedFlight.getNumber();
                     selectedFlight.RemovePassenger(currentSeatClass, seatNumber);
                     passengers.removeFile(seatArray[1], currentFlightNumber, currentSeatClass, seatNumber, false);
-                    if (selectedFlight.getWait(currentSeatClass).getSize() > 0){
+                    if (selectedFlight.getWait(currentSeatClass).getQueue()[0] != null){
                         int response = JOptionPane.showConfirmDialog(Main.this,
                             "Would you like to move "+waitComboBox.getItemAt(0)+" from the waitlist to the available seat?",
                             "Move Passenger", JOptionPane.YES_NO_OPTION);
@@ -254,9 +234,9 @@ public class Main extends JFrame {
                             moveWaitSeatsUp(1, currentFlightNumber, currentSeatClass);
                             updateWaitList(listFlights.getSelectedIndex());
                         }
-                        updateSeats(listFlights.getSelectedIndex());
-                        seatsComboBox.setSelectedIndex(index);
                     }
+                    updateSeats(listFlights.getSelectedIndex());
+                    seatsComboBox.setSelectedIndex(index);
                 }
             }
         });
@@ -324,6 +304,7 @@ public class Main extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                searchModel.clear();
                 String firstName = firstNameSearchTextBox.getText();
                 firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1).toLowerCase();
                 String lastName = lastNameSearchTextBox.getText();
@@ -503,9 +484,8 @@ public class Main extends JFrame {
 
     public void moveWaitSeatsUp(int index, int currentFlightNumber, Flight.SeatClass currentSeatClass){
         for (int i = index; i < waitComboBox.getItemCount(); i++){
-            String selectedPassengerName = waitComboBox.getItemAt(i).toString();
-            if (selectedPassengerName.length() != 1){
-                Passenger selectedPassenger = passengers.getFile(selectedPassengerName, currentFlightNumber, currentSeatClass, i+1, true);
+            if (waitComboBox.getItemAt(i) != null){
+                Passenger selectedPassenger = passengers.getFile(waitComboBox.getItemAt(i).toString(), currentFlightNumber, currentSeatClass, i+1, true);
                 selectedPassenger.setSeatWaitNumber(i);
             }
         }
@@ -537,17 +517,6 @@ public class Main extends JFrame {
         Flight selectedFlight = flights.get(index);
         // Store available spots in waitlist
         Queue waitHashMap = selectedFlight.getWait(Flight.SeatClass.valueOf(classComboBox.getSelectedItem().toString()));
-        // Combine the keys and values of the hashmap into a single string
-        /*String[] waitArray = new String[waitHashMap.getSize()];
-        // store the keys of the hashmap in an array
-        Object[] waitKeys = waitHashMap.keySet().toArray();
-        // Sort the keys
-        Arrays.sort(waitKeys);
-        // Add the sorted keys and values to the waitArray
-        for (int i = 0; i < waitKeys.length; i++) {
-            waitArray[i] = waitKeys[i] + ": " + waitHashMap.get(waitKeys[i]);
-        }*/
-        // Set the model of the waitComboBox to the new array of waitlist
         waitModel = new DefaultComboBoxModel(waitHashMap.getQueue());
         // Set the model of the waitComboBox to the new model
         waitComboBox.setModel(waitModel);
@@ -563,10 +532,9 @@ public class Main extends JFrame {
                 passFlightTextField.setText(" ");
                 passSeatClassTextField.setText(" ");
                 passWaitListTextField.setText(" ");
-                passSeatNumbertextField.setText(" ");
+                passSeatNumberTextField.setText(" ");
                 break;
             default:
-                //Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber
                 Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber, isWaitListed);
                 firstNameTextField.setText(selectedPassenger.getFirstName());
                 lastNameTextField.setText(selectedPassenger.getLastName());
@@ -576,9 +544,9 @@ public class Main extends JFrame {
                 onWaitListCheckBox.setSelected(selectedPassenger.getIsWaitListed());
                 if (onWaitListCheckBox.isSelected()) {
                     passWaitListTextField.setText(selectedPassenger.getSeatWaitNumber() + "");
-                    passSeatNumbertextField.setText(" ");
+                    passSeatNumberTextField.setText(" ");
                 } else {
-                    passSeatNumbertextField.setText(selectedPassenger.getSeatWaitNumber() + "");
+                    passSeatNumberTextField.setText(selectedPassenger.getSeatWaitNumber() + "");
                     passWaitListTextField.setText(" ");
                 }
         }

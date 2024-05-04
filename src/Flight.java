@@ -25,17 +25,14 @@ public class Flight {
     // private String[] firstClass = new String[5];
     private HashMap<Integer, String> firstClass= new HashMap<Integer, String>();
     // A waiting list for first class, 5 spots
-    //private HashMap<Integer, String> firstWait= new HashMap<Integer, String>();
     private Queue firstWait = new Queue(5);
     // Business class seats (10 seats, seats 6 - 15)
     private HashMap<Integer, String> businessClass= new HashMap<Integer, String>();
     // A waiting list for business class, 10 spots
-    //private HashMap<Integer, String> businessWait= new HashMap<Integer, String>();
     private Queue businessWait = new Queue(10);
     // Economy class seats (20 seats, seats 16 - 35)
     private HashMap<Integer, String> economyClass= new HashMap<Integer, String>();
     // A waiting list for economy class, 20 spots
-    //private HashMap<Integer, String> economyWait= new HashMap<Integer, String>();
     private Queue economyWait = new Queue(20);
 
     public Flight(int num, String departure, String arrival, LocalDate date) {
@@ -50,18 +47,12 @@ public class Flight {
     private void CreateSeats(){
         for (int i = 1; i <= 5; i++){
             firstClass.put(i, "Available");
-            //firstWait.put(i, " ");
-            //firstWait.enqueue(" ");
         }
         for (int i = 6; i <= 15; i++){
             businessClass.put(i, "Available");
-            //businessWait.put(i-5, " ");
-            //businessWait.enqueue(" ");
         }
         for (int i = 16; i <= 35; i++){
             economyClass.put(i, "Available");
-            //economyWait.put(i-15, " ");
-            //economyWait.enqueue(" ");
         }
     }
 
@@ -134,7 +125,6 @@ public class Flight {
     public void RemovePassengerFromWait(SeatClass seatClass, int waitNumber){
         switch(seatClass) {
             case First:
-                //firstWait.put(waitNumber, " ");
                 firstWait.popItem(waitNumber-1);
                 break;
             case Business:
@@ -183,19 +173,14 @@ public class Flight {
     }
 
     public void setFirstWait(int index, String firstWait) {
-        //this.firstWait.put(index, firstWait);
-        System.out.println(firstWait);
         this.firstWait.enqueue(firstWait);
-        this.firstWait.printQueue();
     }
 
     public void setBusinessWait(int index, String businessWait) {
-        //this.businessWait.put(index, businessWait);
         this.businessWait.enqueue(businessWait);
     }
 
     public void setEconomyWait(int index, String economyWait) {
-        //this.economyWait.put(index, economyWait);
         this.economyWait.enqueue(economyWait);
     }
     public void setBusinessClass(int index, String businessClass) {
