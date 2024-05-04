@@ -1,17 +1,20 @@
 import java.util.HashMap;
 
+// Class to represent a node in a graph
 public class Node {
-    private String name;
-    private float x;
-    private float y;
-    private HashMap<Node, Integer> myNeighbors = new HashMap<>();
+    private String name; // Name of the node
+    private float x; // X-coordinate of the node
+    private float y; // Y-coordinate of the node
+    private HashMap<Node, Integer> myNeighbors = new HashMap<>(); // Map of neighbors and their distances
 
+    // Constructor to initialize node with name and coordinates
     public Node(String name, float x, float y){
         this.name = name;
         this.x = x;
         this.y = y;
     }
 
+    // Getters and setters for the name of the node
     public String getName() {
         return name;
     }
@@ -20,6 +23,7 @@ public class Node {
         this.name = name;
     }
 
+    // Getters and setters for the x-coordinate
     public float getX() {
         return x;
     }
@@ -28,6 +32,7 @@ public class Node {
         this.x = x;
     }
 
+    // Getters and setters for the y-coordinate
     public float getY() {
         return y;
     }
@@ -36,17 +41,17 @@ public class Node {
         this.y = y;
     }
 
-    // Function to add a neighbor to the list of neighbors
+    // Method to add a neighbor node with automatically calculated distance
     public void addNeighbor(Node neighbor){
         this.myNeighbors.put(neighbor, getDistance(neighbor));
     }
 
-    // Function to get the list of neighbors
+    // Getter for the map of neighbors
     public HashMap<Node, Integer> getMyNeighbors() {
         return myNeighbors;
     }
 
-    // Function to get a list of Strings of the neighbors' names
+    // Method to get an array of neighbor names for easy access
     public String[] getNeighborNames(){
         String[] names = new String[myNeighbors.size()];
         int i = 0;
@@ -57,9 +62,10 @@ public class Node {
         return names;
     }
 
-    // Function to get the distance between two nodes
+    // Method to calculate the Euclidean distance to a neighbor node
     public int getDistance(Node neighbor){
         return (int) Math.sqrt(Math.pow(this.x - neighbor.getX(), 2) + Math.pow(this.y - neighbor.getY(), 2));
     }
 
 }
+

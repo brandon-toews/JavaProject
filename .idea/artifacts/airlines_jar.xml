@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="airlines:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/airlines_jar</output-path>
+    <root id="archive" name="JavaProject.jar">
+      <element id="module-output" name="JavaProject" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/LGoodDatePicker-11.2.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

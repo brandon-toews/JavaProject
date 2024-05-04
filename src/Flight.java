@@ -1,49 +1,40 @@
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Flight {
-    //A flight number (integer 0- 999)
-    private int number;
-    //A departure airport
-    private String departure;
-    //A departure date
-    private LocalDate departureDate;
-    //An arrival airport
-    private String arrival;
+    // Attributes defining the flight
+    private int number; // Flight number, an integer between 0 and 999
+    private String departure; // Departure airport code
+    private LocalDate departureDate; // Date of departure
+    private String arrival; // Arrival airport code
 
+    // Enumeration for seat classes
     enum SeatClass {
         First,
         Business,
         Economy
     }
 
+    // HashMaps for seat assignments in each class
+    private HashMap<Integer, String> firstClass = new HashMap<>(); // First class seats
+    private HashMap<Integer, String> businessClass = new HashMap<>(); // Business class seats
+    private HashMap<Integer, String> economyClass = new HashMap<>(); // Economy class seats
 
-    // A seating lists
-    // First class seats (5 seats, seats 1, 2, 3, 4, and 5).
-    // private String[] firstClass = new String[5];
-    private HashMap<Integer, String> firstClass= new HashMap<Integer, String>();
-    // A waiting list for first class, 5 spots
-    private Queue firstWait = new Queue(5);
-    // Business class seats (10 seats, seats 6 - 15)
-    private HashMap<Integer, String> businessClass= new HashMap<Integer, String>();
-    // A waiting list for business class, 10 spots
-    private Queue businessWait = new Queue(10);
-    // Economy class seats (20 seats, seats 16 - 35)
-    private HashMap<Integer, String> economyClass= new HashMap<Integer, String>();
-    // A waiting list for economy class, 20 spots
-    private Queue economyWait = new Queue(20);
+    // Queues for wait lists in each seat class
+    private Queue firstWait = new Queue(5); // First class wait list
+    private Queue businessWait = new Queue(10); // Business class wait list
+    private Queue economyWait = new Queue(20); // Economy class wait list
 
+    // Constructor to initialize flight details
     public Flight(int num, String departure, String arrival, LocalDate date) {
         setNumber(num);
         setDeparture(departure);
         setArrival(arrival);
         setDepartureDate(date);
-        CreateSeats();
+        CreateSeats(); // Initialize seats as available upon flight creation
     }
 
-    // Function to create seats
+    // Initializes all seats as "Available"
     private void CreateSeats(){
         for (int i = 1; i <= 5; i++){
             firstClass.put(i, "Available");
@@ -56,6 +47,7 @@ public class Flight {
         }
     }
 
+    // Adds a passenger to a specific seat
     public void AddPassenger(SeatClass seatClass, int seatNumber, String name){
         switch(seatClass) {
             case First:
@@ -70,26 +62,26 @@ public class Flight {
             default:
                 break;
         }
-
     }
 
+    // Adds a passenger to the wait list
     public void AddPassengerToWait(SeatClass seatClass, int waitNumber, String name){
         switch(seatClass) {
             case First:
-                setFirstWait(waitNumber, name);
+                firstWait.enqueue(name);
                 break;
             case Business:
-                setBusinessWait(waitNumber, name);
+                businessWait.enqueue(name);
                 break;
             case Economy:
-                setEconomyWait(waitNumber, name);
+                economyWait.enqueue(name);
                 break;
             default:
                 break;
         }
-
     }
 
+    // Removes a passenger from a seat
     public void RemovePassenger(SeatClass seatClass, int seatNumber){
         switch(seatClass) {
             case First:
@@ -106,6 +98,7 @@ public class Flight {
         }
     }
 
+    // Moves a passenger from wait list to a seat
     public void movePassengerFromWaitToSeat(SeatClass seatClass, int seatNumber){
         switch(seatClass) {
             case First:
@@ -122,7 +115,8 @@ public class Flight {
         }
     }
 
-    public void RemovePassengerFromWait(SeatClass seatClass, int waitNumber){
+    // Removes a passenger from the wait list
+    public void RemovePassengerFromWait(Flight.SeatClass seatClass, int waitNumber){
         switch(seatClass) {
             case First:
                 firstWait.popItem(waitNumber-1);
@@ -138,6 +132,7 @@ public class Flight {
         }
     }
 
+    // Getters and setters for flight details
     public int getNumber() {
         return number;
     }
@@ -157,6 +152,7 @@ public class Flight {
     public String getArrival() {
         return arrival;
     }
+
     public void setArrival(String arrival) {
         this.arrival = arrival;
     }
@@ -164,54 +160,47 @@ public class Flight {
     public LocalDate getDepartureDate() {
         return departureDate;
     }
+
     public void setDepartureDate(LocalDate departureDate) {
         this.departureDate = departureDate;
     }
 
-    public void setFirstClass(int index, String firstClass) {
-        this.firstClass.put(index, firstClass);
+    // Methods to manage seat assignments
+    public void setFirstClass(int index, String passenger) {
+        firstClass.put(index, passenger);
     }
 
-    public void setFirstWait(int index, String firstWait) {
-        this.firstWait.enqueue(firstWait);
+    public void setBusinessClass(int index, String passenger) {
+        businessClass.put(index, passenger);
     }
 
-    public void setBusinessWait(int index, String businessWait) {
-        this.businessWait.enqueue(businessWait);
+    public void setEconomyClass(int index, String passenger) {
+        economyClass.put(index, passenger);
     }
 
-    public void setEconomyWait(int index, String economyWait) {
-        this.economyWait.enqueue(economyWait);
-    }
-    public void setBusinessClass(int index, String businessClass) {
-        this.businessClass.put(index, businessClass);
-    }
-
-    public void setEconomyClass(int index, String economyClass) {
-        this.economyClass.put(index, economyClass);
-    }
-
+    // Getter for seats by class
     public HashMap<Integer, String> getSeats(SeatClass seatClass){
         switch(seatClass) {
             case First:
-                return this.firstClass;
+                return firstClass;
             case Business:
-                return this.businessClass;
+                return businessClass;
             case Economy:
-                return this.economyClass;
+                return economyClass;
             default:
                 return null;
         }
     }
 
+    // Getter for wait list by class
     public Queue getWait(SeatClass seatClass){
         switch(seatClass) {
             case First:
-                return this.firstWait;
+                return firstWait;
             case Business:
-                return this.businessWait;
+                return businessWait;
             case Economy:
-                return this.economyWait;
+                return economyWait;
             default:
                 return null;
         }
