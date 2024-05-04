@@ -78,9 +78,24 @@ public class Main extends JFrame {
     private JList searchedList;
     private JScrollPane scrollSearchedPassengers;
     private JLabel schedPassLabel;
+    private JComboBox schedPassFlightComboBox;
+    private JLabel schedPassFlightLabel;
+    private JLabel schedPassSeatClassLabel;
+    private JComboBox schedPassSeatClassComboBox;
+    private DefaultComboBoxModel schedPassSeatClassModel;
+    private JLabel schedPassportLabel;
+    private JTextField schedPassportTextField;
+    private JLabel schedLastNameLabel;
+    private JTextField schedLastNameTextField;
+    private JLabel schedFirstNameLabel;
+    private JTextField schedFirstNameTextField;
     private DefaultListModel model;
     private DefaultComboBoxModel depModel;
     private DefaultComboBoxModel arvModel;
+
+    private DefaultComboBoxModel schedPassFlightModel;
+
+    private String[] flightIndices;
 
     // Create a graph of airports
     private Graph airportGraph = new Graph("src/airports.csv");
@@ -111,7 +126,12 @@ public class Main extends JFrame {
         arvComboBox.setModel(arvModel);
         dateDatePicker.setDateToToday();
         seatClassModel = new DefaultComboBoxModel(Flight.SeatClass.values());
+        schedPassSeatClassModel = new DefaultComboBoxModel(Flight.SeatClass.values());
         classComboBox.setModel(seatClassModel);
+        schedPassSeatClassComboBox.setModel(schedPassSeatClassModel);
+        listFlights.setSelectedIndex(0);
+        updateFlightInfo(0);
+        updateScheduleFlightComboBox();
 
 
         int [] numArray = {5, 1, 5, 4, 2, 3, 0};
@@ -142,16 +162,7 @@ public class Main extends JFrame {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int index = listFlights.getSelectedIndex();
-                if (index != -1){
-                    Flight selectedFlight = flights.get(index);
-                    flightTextField.setText(selectedFlight.getNumber() + "");
-                    departureTextField.setText(selectedFlight.getDeparture());
-                    dateTextField.setText(selectedFlight.getDepartureDate() + "");
-                    arvTextField.setText(selectedFlight.getArrival());
-                    updateSeats(index);
-                    updateWaitList(index);
-
-                }
+                updateFlightInfo(index);
             }
         });
         classComboBox.addActionListener(new ActionListener() {
@@ -249,7 +260,58 @@ public class Main extends JFrame {
         schedPassButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showInputDialog(Main.this, "Hello");
+                Flight selectedFlight = flights.get(schedPassFlightComboBox.getSelectedIndex());
+                Flight.SeatClass selectedSeatClass = Flight.SeatClass.valueOf(schedPassSeatClassComboBox.getSelectedItem().toString());
+                HashMap<Integer, String> selectedSeats = selectedFlight.getSeats(selectedSeatClass);
+                ArrayList<Integer> availableSeats = new ArrayList<Integer>();
+                for (int i = 1; i <= selectedSeats.size(); i++){
+                    if (selectedSeats.get(i) == "Available"){
+                        availableSeats.add(i);
+                    }
+                }
+                if (availableSeats.size() > 0){
+                    Object response = JOptionPane.showInputDialog(Main.this, "Which seat would you like to reserve?",
+                            "Reserve Seat", JOptionPane.PLAIN_MESSAGE, null, availableSeats.toArray(), availableSeats.toArray()[0]);
+                    if (response != null){
+                        int seatNumber = (int) response;
+                        String firstName = schedFirstNameTextField.getText();
+                        firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1).toLowerCase();
+                        String lastName = schedLastNameTextField.getText();
+                        lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).toLowerCase();
+                        selectedFlight.AddPassenger(selectedSeatClass, seatNumber, firstName + " " + lastName);
+                        Passenger newPassenger = new Passenger(firstName, lastName, schedPassportTextField.getText(), selectedFlight.getNumber(), selectedSeatClass, seatNumber, false);
+                        passengers.addFile(newPassenger);
+                        updateSeats(schedPassFlightComboBox.getSelectedIndex());
+                    }
+                } else {
+                    String[] selectedWaitList = selectedFlight.getWait(selectedSeatClass).getQueue();
+                    boolean noSeatsAvailable = true;
+                    for (int i = 0; i < selectedWaitList.length; i++){
+                        if (selectedWaitList[i] == " "){
+                            int response = JOptionPane.showConfirmDialog(Main.this,
+                                    "All seats for in this seat class are already reserved, would you like to be put on the wait list?",
+                                    "Join Wait List", JOptionPane.YES_NO_OPTION);
+                            if (response == 0){
+                                String firstName = schedFirstNameTextField.getText();
+                                firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1).toLowerCase();
+                                String lastName = schedLastNameTextField.getText();
+                                lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).toLowerCase();
+                                selectedFlight.AddPassengerToWait(selectedSeatClass, i+1, firstName + " " + lastName);
+                                Passenger newPassenger = new Passenger(firstName, lastName, schedPassportTextField.getText(), selectedFlight.getNumber(), selectedSeatClass, i+1, true);
+                                passengers.addFile(newPassenger);
+                                updateWaitList(schedPassFlightComboBox.getSelectedIndex());
+                                JOptionPane.showMessageDialog(Main.this, "You are number "+(i+1)+" on the wait list.");
+                            }
+                            noSeatsAvailable = false;
+                            break;
+                        }
+                    }
+                    if (noSeatsAvailable) {
+                        JOptionPane.showMessageDialog(Main.this,
+                                "All seats for in this seat class are already reserved and the wait list is full! Please try another seat class or flight.");
+                    }
+                }
+
             }
         });
     }
@@ -258,10 +320,34 @@ public class Main extends JFrame {
         new Main();
     }
 
+    public void updateFlightInfo(int index){
+        if (index != -1){
+            Flight selectedFlight = flights.get(index);
+            flightTextField.setText(selectedFlight.getNumber() + "");
+            departureTextField.setText(selectedFlight.getDeparture());
+            dateTextField.setText(selectedFlight.getDepartureDate() + "");
+            arvTextField.setText(selectedFlight.getArrival());
+            updateSeats(index);
+            updateWaitList(index);
+
+        }
+    }
+
+    public void updateScheduleFlightComboBox(){
+        // Get indices of all flights and add them to the schedPassFlightComboBox
+        flightIndices = new String[flights.size()];
+        for (int i = 0; i < flights.size(); i++) {
+            flightIndices[i] = String.valueOf(i);
+        }
+        schedPassFlightModel = new DefaultComboBoxModel(flightIndices);
+        schedPassFlightComboBox.setModel(schedPassFlightModel);
+    }
+
     // Function to instantiate flight objects in flights and add them to the listFlights
     public void addFlight(int num, String departure, String arrival, LocalDate date){
         flights.add(new Flight(num, departure, arrival, date));
         model.add(num, "#: " + flights.get(num).getNumber() + ", From: " + flights.get(num).getDeparture() + ", To: " + flights.get(num).getArrival() + ", On: " + flights.get(num).getDepartureDate());
+        updateScheduleFlightComboBox();
     }
 
     // Function to generate an amount of flights using all cities in Airports
@@ -435,25 +521,18 @@ public class Main extends JFrame {
             case "Available":
             case " ":
                 firstNameTextField.setText(" ");
-                firstNameTextField.setEditable(true);
                 lastNameTextField.setText(" ");
-                lastNameTextField.setEditable(true);
                 passportTextField.setText(" ");
-                passportTextField.setEditable(true);
                 passFlightTextField.setText(" ");
                 passSeatClassTextField.setText(" ");
-                onWaitListCheckBox.setSelected(false);
                 passWaitListTextField.setText(" ");
                 passSeatNumbertextField.setText(" ");
                 break;
             default:
                 //Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber
                 Passenger selectedPassenger = passengers.getFile(passengerName, flightNumber, seatClass, seatNumber, isWaitListed);
-                firstNameTextField.setEditable(false);
                 firstNameTextField.setText(selectedPassenger.getFirstName());
-                lastNameTextField.setEditable(false);
                 lastNameTextField.setText(selectedPassenger.getLastName());
-                passportTextField.setEditable(false);
                 passportTextField.setText(selectedPassenger.getPassport());
                 passFlightTextField.setText(selectedPassenger.getFlightNumber() + "");
                 passSeatClassTextField.setText(selectedPassenger.getSeatClass().toString());

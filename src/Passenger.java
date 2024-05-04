@@ -17,6 +17,13 @@ public class Passenger {
 
     // Constructor
     public Passenger(String firstName, String lastName, String passportNumber, int flightNumber, Flight.SeatClass seatClass, int seatWaitNumber, boolean isWaitListed){
+        // Captialize the first letter of the first name and last name
+        firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1).toLowerCase();
+        lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).toLowerCase();
+
+        // Capitalize all letters of the passport number
+        passportNumber = passportNumber.toUpperCase();
+
         this.firstName = firstName;
         this.lastName = lastName;
         this.passportNumber = passportNumber;
