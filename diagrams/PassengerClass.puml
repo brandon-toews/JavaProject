@@ -1,0 +1,29 @@
+@startuml
+class Passenger {
+    - String firstName
+    - String lastName
+    - String passportNumber
+    - int flightNumber
+    - Flight.SeatClass seatClass
+    - int seatWaitNumber
+    - boolean isWaitListed
+
+    + Passenger(firstName : String, lastName : String, passportNumber : String, flightNumber : int, seatClass : Flight.SeatClass, seatWaitNumber : int, isWaitListed : boolean)
+    + formatName(name : String) : String
+    + getFullName() : String
+    + getFirstName() : String
+    + setFirstName(firstName : String) : void
+    + getLastName() : String
+    + setLastName(lastName : String) : void
+    + getPassport() : String
+    + setPassport(passportNumber : String) : void
+    + getFlightNumber() : int
+    + setFlightNumber(flightNumber : int) : void
+    + getSeatClass() : Flight.SeatClass
+    + setSeatClass(seatClass : Flight.SeatClass) : void
+    + getSeatWaitNumber() : int
+    + setSeatWaitNumber(seatWaitNumber : int) : void
+    + getIsWaitListed() : boolean
+    + setIsWaitListed(isWaitListed : boolean) : void
+}
+@enduml

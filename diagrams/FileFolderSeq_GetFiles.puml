@@ -1,0 +1,17 @@
+@startuml
+actor User
+participant "FileFolder" as FF
+participant "ArrayList<Passenger>" as List
+
+User -> FF : getFiles(firstName, lastName)
+activate FF
+
+FF -> List : get(folderKey)
+activate List
+List -> List : binarySearch(firstName, lastName)
+List --> FF : return Passenger[]
+
+FF --> User : Passenger[]
+deactivate FF
+
+@enduml

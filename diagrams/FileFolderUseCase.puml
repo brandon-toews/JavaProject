@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+actor User as "User"
+usecase "Add Passenger File" as Add
+usecase "Retrieve Passenger File" as Get
+usecase "Remove Passenger File" as Remove
+usecase "Sort Passenger Files" as Sort
+usecase "Search Passenger Files" as Search
+
+User --> Add
+User --> Get
+User --> Remove
+User --> Sort
+User --> Search
+@enduml

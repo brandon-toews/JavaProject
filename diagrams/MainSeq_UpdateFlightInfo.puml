@@ -1,0 +1,50 @@
+@startuml
+actor User
+participant "Main" as M
+participant "JList" as FlightList
+participant "Flight" as F
+participant "JTextField" as FlightNumberField
+participant "JTextField" as DepartureField
+participant "JTextField" as ArrivalField
+participant "JTextField" as DateField
+
+User -> FlightList : selectFlight()
+activate FlightList
+FlightList -> M : updateFlightInfo(index)
+activate M
+
+M -> FlightList : getSelectedValue()
+FlightList -> M : selectedFlight
+deactivate FlightList
+
+M -> M : getFlight(selectedFlight)
+activate M
+M -> F : new Flight()
+activate F
+F --> M : Flight details
+deactivate F
+
+M -> FlightNumberField : setText(Flight.getNumber())
+activate FlightNumberField
+FlightNumberField --> M
+deactivate FlightNumberField
+
+M -> DepartureField : setText(Flight.getDeparture())
+activate DepartureField
+DepartureField --> M
+deactivate DepartureField
+
+M -> ArrivalField : setText(Flight.getArrival())
+activate ArrivalField
+ArrivalField --> M
+deactivate ArrivalField
+
+M -> DateField : setText(Flight.getDepartureDate().toString())
+activate DateField
+DateField --> M
+deactivate DateField
+
+deactivate M
+@enduml
+
+

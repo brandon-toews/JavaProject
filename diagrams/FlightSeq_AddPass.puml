@@ -1,0 +1,17 @@
+@startuml
+actor User as "User"
+participant "Flight" as Flight
+participant "HashMap" as Seats
+
+User -> Flight : addPassenger(seatClass, seatNumber, name)
+activate Flight
+
+Flight -> Seats : get(seatClass)
+activate Seats
+Seats -> Seats : put(seatNumber, name)
+Seats --> Flight
+deactivate Seats
+
+Flight --> User : void
+deactivate Flight
+@enduml

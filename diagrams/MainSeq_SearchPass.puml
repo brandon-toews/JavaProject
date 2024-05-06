@@ -1,0 +1,17 @@
+@startuml
+actor User
+participant "Main" as M
+participant "FileFolder" as FF
+
+User -> M : searchButtonActionPerformed()
+activate M
+M -> FF : getFiles(firstName, lastName)
+activate FF
+FF --> M : foundPassengers
+deactivate FF
+M --> User : displayFoundPassengers()
+deactivate M
+@enduml
+
+
+

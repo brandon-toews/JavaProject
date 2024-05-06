@@ -1,0 +1,28 @@
+@startuml
+class FileFolder {
+    -HashMap<String, ArrayList<Passenger>> folders
+
+    +addFile(Passenger)
+    +getFile(String, int, Flight.SeatClass, int, boolean) : Passenger
+    +removeFile(String, int, Flight.SeatClass, int, boolean)
+    -insertionSortFolder(ArrayList<Passenger>)
+    -searchFolder(ArrayList<Passenger>, String, int, Flight.SeatClass, int, boolean) : Passenger
+    -binarySearchFolder(ArrayList<Passenger>, String, String) : String[]
+    -searchFolderRemoveFile(ArrayList<Passenger>, String, int, Flight.SeatClass, int, boolean)
+}
+
+class Passenger {
+    +String getFullName()
+    +String getFirstName()
+    +String getLastName()
+    +int getFlightNumber()
+    +Flight.SeatClass getSeatClass()
+    +int getSeatWaitNumber()
+    +boolean getIsWaitListed()
+}
+
+class Flight {
+    enum SeatClass { ECONOMY, BUSINESS, FIRST }
+}
+FileFolder "1" -- "many" Passenger : contains
+@enduml

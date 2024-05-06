@@ -1,0 +1,20 @@
+@startuml
+actor User
+participant "Queue" as Q
+
+User -> Q : popItem(index)
+activate Q
+
+alt If index is valid (within bounds)
+    Q -> Q : remove item at index
+    loop Shift Remaining Items
+        Q -> Q : shift items left to fill gap
+    end
+    Q -> Q : decrement currentAmount
+    Q --> User : return removed item
+else Index is out of bounds
+    Q --> User : return null
+end
+
+deactivate Q
+@enduml

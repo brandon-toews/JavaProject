@@ -37,7 +37,7 @@ public class FileFolder {
     }
 
     // Insertion sort for the folder
-    public void insertionSortFolder(ArrayList<Passenger> folder){
+    private void insertionSortFolder(ArrayList<Passenger> folder){
         // Iterate through the folder
         for (int i = 1; i < folder.size(); i++) {
             // Get the passenger at the current index
@@ -62,9 +62,13 @@ public class FileFolder {
     }
 
     // Linear search for a passenger in the folder
-    public Passenger searchFolder(ArrayList<Passenger> folder, String passengerName, int flightNumber, Flight.SeatClass seatClass, int seatNumber, boolean isWaitListed){
-        // Iterate through the folder
-        for (Passenger passenger : folder) {
+    private Passenger searchFolder(ArrayList<Passenger> folder, String passengerName, int flightNumber, Flight.SeatClass seatClass, int seatNumber, boolean isWaitListed){
+        // Split the passenger name into first and last names
+        String[] firstLastName = passengerName.split(" ");
+        // Use the binarySearchFolder method to get all passengers with the same first and last names
+        ArrayList<Passenger> foundPassengers = binarySearchFolder(folder, firstLastName[0], firstLastName[1]);
+        // Iterate through the found passengers
+        for (Passenger passenger : foundPassengers) {
             // Return the passenger if all attributes match
             if (passenger.getFullName().equals(passengerName) && passenger.getFlightNumber() == flightNumber && passenger.getSeatClass() == seatClass && passenger.getSeatWaitNumber() == seatNumber && passenger.getIsWaitListed() == isWaitListed) {
                 return passenger;
@@ -82,13 +86,25 @@ public class FileFolder {
         ArrayList<Passenger> folder = this.folders.get(String.valueOf(letter));
         // Call the binarySearchFolder method to get all passengers with the same first and last names
         // in the folder
-        return binarySearchFolder(folder, firstName, lastName);
+        ArrayList<Passenger> foundPassengers = binarySearchFolder(folder, firstName, lastName);
+        // Extract the necessary information from all the passengers
+        // match the first and last names given to form a String[]
+        String[] passengerStrings = new String[foundPassengers.size()];
+        for (int i = 0; i < foundPassengers.size(); i++) {
+            Passenger passenger = foundPassengers.get(i);
+            passengerStrings[i] = "Name: "+passenger.getFullName()+
+                    ", Flight #: "+passenger.getFlightNumber()+
+                    ", Seat Class: "+passenger.getSeatClass()+
+                    ", Seat #: "+passenger.getSeatWaitNumber()+
+                    ", Waitlisted: "+passenger.getIsWaitListed();
+        }
+        return passengerStrings;
     }
 
     // Binary search for a passenger in the folder
-    public String[] binarySearchFolder(ArrayList<Passenger> folder, String firstName, String lastName){
+    private ArrayList<Passenger> binarySearchFolder(ArrayList<Passenger> folder, String firstName, String lastName){
         // Create an array list to store passengers
-        ArrayList<String> passengers = new ArrayList<String>();
+        ArrayList<Passenger> passengers = new ArrayList<Passenger>();
         // Initialize left and right pointers
         int left = 0;
         int right = folder.size() - 1;
@@ -101,45 +117,33 @@ public class FileFolder {
             // Add the passenger to the list if the first and last names match
             if (passenger.getFirstName().equals(firstName) && passenger.getLastName().equals(lastName)) {
                 // Add the passenger to the list
-                passengers.add("Name: "+passenger.getFullName()+
-                        ", Flight #: "+passenger.getFlightNumber()+
-                        ", Seat Class: "+passenger.getSeatClass()+
-                        ", Seat #: "+passenger.getSeatWaitNumber()+
-                        ", Waitlisted: "+passenger.getIsWaitListed());
+                passengers.add(passenger);
                 // Add all passengers with the same first and last names
                 // Add passengers before the middle index
                 int i = mid - 1;
                 while (i >= 0 && folder.get(i).getFirstName().equals(firstName) && folder.get(i).getLastName().equals(lastName)) {
-                    passengers.add("Name: "+folder.get(i).getFullName()+
-                            ", Flight #: "+folder.get(i).getFlightNumber()+
-                            ", Seat Class: "+folder.get(i).getSeatClass()+
-                            ", Seat #: "+folder.get(i).getSeatWaitNumber()+
-                            ", Waitlisted: "+folder.get(i).getIsWaitListed());
+                    passengers.add(folder.get(i));
                     i--;
                 }
                 // Add passengers after the middle index
                 i = mid + 1;
                 while (i < folder.size() && folder.get(i).getFirstName().equals(firstName) && folder.get(i).getLastName().equals(lastName)) {
-                    passengers.add("Name: "+folder.get(i).getFullName()+
-                            ", Flight #: "+folder.get(i).getFlightNumber()+
-                            ", Seat Class: "+folder.get(i).getSeatClass()+
-                            ", Seat #: "+folder.get(i).getSeatWaitNumber()+
-                            ", Waitlisted: "+folder.get(i).getIsWaitListed());
+                    passengers.add(folder.get(i));
                     i++;
                 }
                 // Return the list of passengers
-                return passengers.toArray(new String[0]);
+                return passengers;
                 // Update the left and right pointers
                 // based on the comparison of first and last names
             } else if (passenger.getLastName().compareTo(lastName) < 0 || passenger.getLastName().equals(lastName)
-            && (passenger.getFirstName().compareTo(firstName) < 0 || passenger.getFirstName().equals(firstName))) {
+                    && (passenger.getFirstName().compareTo(firstName) < 0 || passenger.getFirstName().equals(firstName))) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
             }
         }
         // Return an empty array if no passengers are found
-        return passengers.toArray(new String[0]);
+        return passengers;
     }
 
     // Removes a passenger from the folder
@@ -154,15 +158,17 @@ public class FileFolder {
     }
 
     // Removes a passenger from the folder
-    public void searchFolderRemoveFile(ArrayList<Passenger> folder, String passengerName, int flightNumber, Flight.SeatClass seatClass, int seatNumber, boolean isWaitListed){
-        // Create an iterator for the folder
-        Iterator<Passenger> iterator = folder.iterator();
-        // Iterate through the folder
-        while (iterator.hasNext()) {
-            Passenger passenger = iterator.next();
-            // Remove the passenger if all attributes match
+    private void searchFolderRemoveFile(ArrayList<Passenger> folder, String passengerName, int flightNumber, Flight.SeatClass seatClass, int seatNumber, boolean isWaitListed){
+        // Split the passenger name into first and last names
+        String[] firstLastName = passengerName.split(" ");
+        // Use the binarySearchFolder method to get all passengers with the same first and last names
+        ArrayList<Passenger> foundPassengers = binarySearchFolder(folder, firstLastName[0], firstLastName[1]);
+        // Iterate through the found passengers
+        for (Passenger passenger : foundPassengers) {
+            // If all attributes match, remove the passenger from the original folder
             if (passenger.getFullName().equals(passengerName) && passenger.getFlightNumber() == flightNumber && passenger.getSeatClass() == seatClass && passenger.getSeatWaitNumber() == seatNumber && passenger.getIsWaitListed() == isWaitListed) {
-                iterator.remove();
+                folder.remove(passenger);
+                break;  // Exit the loop once the passenger is found and removed
             }
         }
     }

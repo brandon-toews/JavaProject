@@ -1,0 +1,76 @@
+@startuml
+actor User
+participant "Main" as M
+participant "Flight" as F
+participant "Dialog" as D
+participant "FileFolder" as FF
+participant "Passenger" as P
+
+User -> M : schedPassButtonActionPerformed()
+activate M
+
+M -> F : getFlight(selectedFlightIndex)
+activate F
+F --> M : Flight
+deactivate F
+
+M -> F : checkAvailableSeats()
+activate F
+F --> M : availableSeats
+deactivate F
+
+alt if availableSeats is not empty
+    M -> D : showAvailableSeatsDialog(availableSeats)
+    activate D
+    D -> M : selectedSeat
+    deactivate D
+    M -> F : addPassengerToSeat(selectedSeat)
+    activate F
+    F --> M
+    deactivate F
+    M -> P : new Passenger(details)
+    activate P
+    P --> M
+    M -> FF : addFile(P)
+    activate FF
+    FF --> M
+    deactivate FF
+else
+    M -> F : checkWaitList()
+    activate F
+    F --> M : waitListStatus
+    deactivate F
+
+    alt if waitListStatus is not full
+        M -> D : showWaitListDialog()
+        activate D
+        D -> M : userDecision
+        deactivate D
+        alt if userDecision is Yes
+            M -> F : addPassengerToWaitList()
+            activate F
+            F --> M
+            deactivate F
+            M -> P : new Passenger(details)
+            activate P
+            P --> M
+            M -> FF : addFile(P)
+            activate FF
+            FF --> M
+            deactivate FF
+        else
+            M --> User : displayNoActionTaken()
+        end
+    else
+        M -> D : showFullWaitListMessage()
+        activate D
+        D --> User
+        deactivate D
+    end
+end
+
+M --> User : updateUI()
+deactivate M
+@enduml
+
+

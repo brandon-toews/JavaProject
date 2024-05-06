@@ -1,0 +1,12 @@
+@startuml
+actor User
+participant "Main" as M
+
+User -> M : listFlightsValueChanged()
+activate M
+M -> M : updateFlightInfo(selectedIndex)
+M --> User : displayFlightInfo()
+deactivate M
+@enduml
+
+

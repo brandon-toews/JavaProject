@@ -1,0 +1,19 @@
+@startuml
+left to right direction
+actor User as "User"
+
+usecase UC1 as "Add Passenger"
+usecase UC2 as "Remove Passenger"
+usecase UC3 as "Add to Wait List"
+usecase UC4 as "Remove from Wait List"
+usecase UC5 as "Check Seat Availability"
+usecase UC6 as "Check Wait List Status"
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+
+@enduml

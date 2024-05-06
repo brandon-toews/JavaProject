@@ -1,0 +1,21 @@
+@startuml
+actor User
+participant "Node" as N
+participant "HashMap" as HM
+participant "Array" as A
+
+User -> N : getNeighborNames()
+activate N
+N -> HM : keySet()
+activate HM
+HM --> N : keys
+deactivate HM
+loop for each key in keys
+    N -> N : getName()
+    N --> A : add name
+end
+A --> N : names
+deactivate N
+N --> User : names
+deactivate N
+@enduml

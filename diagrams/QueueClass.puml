@@ -1,0 +1,15 @@
+@startuml
+class Queue {
+    - int size
+    - int currentAmount
+    - String[] queue
+
+    + enqueue(name : String) : void
+    + dequeue() : String
+    + popItem(index : int) : String
+    + printQueue() : void
+    + getSize() : int
+    + getCurrentAmount() : int
+    + getQueue() : String[]
+}
+@enduml

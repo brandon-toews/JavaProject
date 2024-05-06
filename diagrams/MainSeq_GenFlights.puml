@@ -1,0 +1,21 @@
+@startuml
+actor User
+participant "Main" as M
+participant "Graph" as G
+participant "Flight" as F
+
+User -> M : generateFlights(amount)
+activate M
+loop until amount of flights generated
+    M -> G : getNode(airports[i])
+    activate G
+    G --> M : Node
+    deactivate G
+    M -> F : new Flight(num, departure, arrival, date)
+    activate F
+    F --> M
+    deactivate F
+    M -> M : flights.add(Flight)
+end
+deactivate M
+@enduml

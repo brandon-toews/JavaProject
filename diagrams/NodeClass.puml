@@ -1,0 +1,13 @@
+@startuml
+class Node {
+    - String name
+    - float x
+    - float y
+    - HashMap<Node, Integer> myNeighbors
+
+    + Node(name : String, x : float, y : float)
+    + addNeighbor(neighbor : Node) : void
+    + getDistance(neighbor : Node) : int
+    + getNeighborNames() : String[]
+}
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+actor User
+participant "Passenger" as P
+
+User -> P : new Passenger(firstName, lastName, passportNumber, flightNumber, seatClass, seatWaitNumber, isWaitListed)
+activate P
+P -> P : formatName(firstName)
+P -> P : formatName(lastName)
+P --> User
+deactivate P
+@enduml

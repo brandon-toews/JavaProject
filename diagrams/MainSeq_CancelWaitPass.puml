@@ -1,0 +1,39 @@
+@startuml
+actor User
+participant "Main" as M
+participant "JComboBox" as WaitComboBox
+participant "Flight" as F
+participant "FileFolder" as FF
+participant "Dialog" as D
+
+User -> WaitComboBox : selectWaitListPassenger()
+activate WaitComboBox
+WaitComboBox -> M : cancelWaitButtonActionPerformed()
+activate M
+
+M -> F : getFlight(selectedFlightIndex)
+activate F
+F -> F : removePassengerFromWait(waitIndex)
+F --> M
+deactivate F
+
+M -> FF : removeFile(waitPassengerDetails)
+activate FF
+FF --> M
+deactivate FF
+
+' Update the remaining waitlist numbers
+loop for each remaining passenger in waitlist
+    M -> FF : updatePassengerFile(waitIndex, newWaitIndex)
+    activate FF
+    FF --> M
+    deactivate FF
+end
+
+M -> M : updateWaitListUI()
+M --> User : displayUpdatedWaitList()
+deactivate M
+@enduml
+
+
+

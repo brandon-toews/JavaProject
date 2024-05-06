@@ -1,0 +1,15 @@
+@startuml
+actor User
+participant "Main" as M
+participant "Flight" as F
+
+User -> M : addFlight(num, departure, arrival, date)
+activate M
+M -> F : new Flight(num, departure, arrival, date)
+activate F
+F --> M
+M -> M : flights.add(Flight)
+deactivate F
+deactivate M
+@enduml
+

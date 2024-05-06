@@ -1,0 +1,24 @@
+@startuml
+class Graph {
+    - HashMap<String, Node> myNodes
+
+    + Graph(csvFile : String)
+    + addNode(records : List<String>) : void
+    + addEdge(node1 : Node, node2 : Node) : void
+    + getNode(name : String) : Node
+    + getMyNodes() : HashMap<String, Node>
+}
+class Node {
+    - String name
+    - float x
+    - float y
+    - HashMap<Node, Integer> myNeighbors
+
+    + Node(name : String, x : float, y : float)
+    + addNeighbor(neighbor : Node) : void
+    + getDistance(neighbor : Node) : int
+    + getNeighborNames() : String[]
+}
+
+Graph "1" *-- "many" Node : contains
+@enduml

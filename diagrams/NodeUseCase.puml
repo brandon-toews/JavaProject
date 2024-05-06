@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+actor User
+
+usecase UC1 as "Create Node"
+usecase UC2 as "Add Neighbor"
+usecase UC3 as "Calculate Distance"
+usecase UC4 as "Get Neighbor Names"
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+
+@enduml

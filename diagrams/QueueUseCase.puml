@@ -1,0 +1,17 @@
+@startuml
+left to right direction
+actor User
+usecase "Enqueue Item" as Enqueue
+usecase "Dequeue Item" as Dequeue
+usecase "Pop Specific Item" as PopItem
+usecase "Print Queue" as Print
+usecase "Check Queue Size" as CheckSize
+usecase "Check Current Amount" as CheckAmount
+
+User --> Enqueue
+User --> Dequeue
+User --> PopItem
+User --> Print
+User --> CheckSize
+User --> CheckAmount
+@enduml

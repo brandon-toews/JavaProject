@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+actor "User" as User
+
+usecase UC1 as "Create Passenger"
+usecase UC2 as "Update Passenger Details"
+usecase UC3 as "Check Passenger Status"
+usecase UC4 as "Modify Flight Details"
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+
+@enduml

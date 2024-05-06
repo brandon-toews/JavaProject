@@ -1,0 +1,9 @@
+@startuml
+actor User
+participant "Node" as N
+
+User -> N : new Node(name, x, y)
+activate N
+N --> User
+deactivate N
+@enduml

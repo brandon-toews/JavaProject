@@ -1,0 +1,17 @@
+@startuml
+left to right direction
+actor User
+
+usecase UC1 as "Create Graph"
+usecase UC2 as "Add Node"
+usecase UC3 as "Add Edge"
+usecase UC4 as "Get Node"
+usecase UC5 as "Get All Nodes"
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+
+@enduml

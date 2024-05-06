@@ -1,0 +1,46 @@
+@startuml
+actor User
+participant "Main" as M
+participant "JComboBox" as SeatsComboBox
+participant "Flight" as F
+participant "FileFolder" as FF
+participant "Dialog" as D
+
+User -> SeatsComboBox : selectSeatToCancel()
+activate SeatsComboBox
+SeatsComboBox -> M : cancelPassButtonActionPerformed()
+activate M
+
+M -> F : getFlight(selectedIndex)
+activate F
+F -> F : removePassenger(seatNumber)
+activate F
+F --> M
+deactivate F
+
+M -> FF : removeFile(passengerDetails)
+activate FF
+FF --> M
+deactivate FF
+
+' Check if there is a passenger on the waitlist
+F -> F : checkWaitList()
+F --> M : waitListStatus
+M -> D : showDialog("Move passenger from waitlist?")
+activate D
+D --> M : userDecision
+deactivate D
+
+alt if userDecision is Yes
+    M -> F : movePassengerFromWaitToSeat()
+    F --> M
+    M -> FF : updatePassenger(seatNumber, isWaitListed)
+    FF --> M
+else
+    M -> M : updateUI()
+end
+
+M --> User : displayUpdatedInfo()
+deactivate M
+@enduml
+

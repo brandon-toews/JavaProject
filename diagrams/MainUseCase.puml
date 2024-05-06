@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+actor User
+
+usecase UC1 as "Initialize System"
+usecase UC2 as "Add Flight"
+usecase UC3 as "View Flight Info"
+usecase UC4 as "Manage Passenger"
+usecase UC5 as "View Passenger Status"
+usecase UC6 as "Search Passenger"
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+actor User
+participant "Flight" as Flight
+participant "Queue" as WaitList
+
+User -> Flight : addPassengerToWait(seatClass, name)
+activate Flight
+
+Flight -> WaitList : getWait(seatClass)
+activate WaitList
+WaitList -> WaitList : enqueue(name)
+WaitList --> Flight
+deactivate WaitList
+
+Flight --> User : void
+deactivate Flight
+@enduml

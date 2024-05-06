@@ -1,0 +1,24 @@
+@startuml
+actor User
+participant "FileFolder" as FF
+participant "ArrayList<Passenger>" as List
+
+User -> FF : addFile(newPassenger)
+activate FF
+
+FF -> List : get(folderKey)
+activate List
+List -> List : add(newPassenger)
+List --> FF
+
+FF -> FF : insertionSortFolder(folder)
+activate FF
+FF -> List : get(folderKey)
+activate List
+FF -> List : sort()
+List --> FF
+deactivate List
+FF --> User : void
+deactivate FF
+
+@enduml

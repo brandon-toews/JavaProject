@@ -1,0 +1,17 @@
+@startuml
+actor User
+participant "FileFolder" as FF
+participant "ArrayList<Passenger>" as List
+
+User -> FF : getFile(passengerName, flightNumber, seatClass, seatNumber, isWaitListed)
+activate FF
+
+FF -> List : get(folderKey)
+activate List
+List -> List : search(passenger criteria)
+List --> FF : return Passenger
+
+FF --> User : Passenger
+deactivate FF
+
+@enduml

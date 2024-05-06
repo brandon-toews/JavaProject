@@ -1,0 +1,21 @@
+@startuml
+class Flight {
+    - int number
+    - String departure
+    - String arrival
+    - LocalDate departureDate
+    - HashMap<Integer, String> firstClassSeats
+    - HashMap<Integer, String> businessClassSeats
+    - HashMap<Integer, String> economyClassSeats
+    - Queue firstWaitList
+    - Queue businessWaitList
+    - Queue economyWaitList
+
+    + addPassenger(seatClass : SeatClass, seatNumber : int, name : String) : void
+    + removePassenger(seatClass : SeatClass, seatNumber : int) : void
+    + addPassengerToWait(seatClass : SeatClass, name : String) : void
+    + removePassengerFromWait(seatClass : SeatClass, waitNumber : int) : void
+    + getSeats(seatClass : SeatClass) : HashMap<Integer, String>
+    + getWaitList(seatClass : SeatClass) : Queue
+}
+@enduml

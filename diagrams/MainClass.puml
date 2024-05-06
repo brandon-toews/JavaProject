@@ -1,0 +1,40 @@
+@startuml
+class Main {
+    - Graph airportGraph
+    - ArrayList<Flight> flights
+    - FileFolder passengers
+    - JButton addFlight
+    - JComboBox<String> depComboBox, arvComboBox
+    - JList<String> listFlights
+    - DefaultListModel<String> flightListModel
+    - DefaultComboBoxModel<String> depModel, arvModel
+    - DatePicker dateDatePicker
+    - JTextField departureTextField, arvTextField, flightTextField
+    - JComboBox<String> classComboBox, seatsComboBox, waitComboBox
+    - JTextField firstNameTextField, lastNameTextField, passportTextField
+
+    + Main()
+    + void main(args : String[]) : void
+    + void addFlight(flightNumber : int, departure : String, arrival : String, date : LocalDate) : void
+    + void updateFlightInfo(index : int) : void
+    + void generateFlights(amount : int) : void
+    + void generatePassengers(csvFile : String) : void
+    + void updateSeats(index : int) : void
+    + void updateWaitList(index : int) : void
+    + void updatePassengerStatus(name : String, flightNumber : int, seatClass : Flight.SeatClass, seatNumber : int, isWaitListed : boolean) : void
+}
+
+class Graph {
+}
+
+class Flight {
+    }
+
+class FileFolder {
+   }
+
+Main *-- Graph : "contains"
+Main *-- "0..*" Flight : "manages"
+Main *-- FileFolder : "utilizes"
+@enduml
+

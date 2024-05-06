@@ -1,0 +1,47 @@
+@startuml
+actor User
+participant "Passenger" as P
+
+' Retrieve passenger's first name
+User -> P : getFirstName()
+activate P
+P --> User : firstName
+deactivate P
+
+' Retrieve passenger's last name
+User -> P : getLastName()
+activate P
+P --> User : lastName
+deactivate P
+
+' Retrieve passenger's full name
+User -> P : getFullName()
+activate P
+P --> User : fullName
+deactivate P
+
+' Retrieve passenger's flight number
+User -> P : getFlightNumber()
+activate P
+P --> User : flightNumber
+deactivate P
+
+' Retrieve passenger's seat class
+User -> P : getSeatClass()
+activate P
+P --> User : seatClass
+deactivate P
+
+' Retrieve passenger's seat/wait number
+User -> P : getSeatWaitNumber()
+activate P
+P --> User : seatWaitNumber
+deactivate P
+
+' Check if the passenger is on the wait list
+User -> P : getIsWaitListed()
+activate P
+P --> User : isWaitListed
+deactivate P
+
+@enduml

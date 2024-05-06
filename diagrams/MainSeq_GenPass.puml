@@ -1,0 +1,35 @@
+@startuml
+actor User
+participant "Main" as M
+participant "BufferedReader" as BR
+participant "Flight" as F
+participant "Passenger" as P
+participant "FileFolder" as FF
+
+User -> M : generatePassengers(csvFile)
+activate M
+
+M -> BR : new BufferedReader(new FileReader(csvFile))
+activate BR
+BR -> BR : readLine() "header skip"
+loop for each line in csvFile
+    BR -> M : readLine()
+    M -> F : getFlight(flightNumber)
+    activate F
+    F --> M
+    M -> P : new Passenger(details)
+    activate P
+    P --> M
+    M -> F : addPassenger(P)
+    F --> M
+    M -> FF : addFile(P)
+    activate FF
+    FF --> M
+    deactivate FF
+    deactivate P
+end
+BR -> M : close()
+deactivate BR
+deactivate M
+@enduml
+

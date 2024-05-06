@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant "Graph" as G
+participant "Node" as N
+participant "HashMap" as HM
+
+User -> G : new Graph(csvFile)
+activate G
+
+loop for each record in csvFile
+    G -> G : addNode(records)
+    activate G
+    G -> N : new Node(name, x, y)
+    activate N
+    N --> G
+    deactivate N
+
+    loop for each neighbor in records
+        G -> G : addEdge(Node, Neighbor)
+    end
+    G --> G
+    deactivate G
+end
+
+G -> HM : put(name, Node)
+deactivate G
+@enduml

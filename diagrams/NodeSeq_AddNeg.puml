@@ -1,0 +1,22 @@
+@startuml
+actor User
+participant "Node 1" as N1
+participant "Node 2" as N2
+participant "HashMap" as HM
+
+User -> N1 : addNeighbor(N2)
+activate N1
+N1 -> N1 : getDistance(N2)
+activate N1
+N1 -> N2 : getX()
+activate N2
+N2 --> N1
+deactivate N2
+N1 -> N2 : getY()
+N1 --> N1 : distance calculated
+N1 -> HM : put(N2, distance)
+deactivate N1
+HM --> N1
+N1 --> User
+deactivate N1
+@enduml

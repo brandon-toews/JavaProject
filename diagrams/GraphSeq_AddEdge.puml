@@ -1,0 +1,15 @@
+@startuml
+actor User
+participant "Graph" as G
+participant "Node 1" as Node1
+participant "Node 2" as Node2
+
+User -> G : addEdge(node1, node2)
+activate G
+G -> Node1 : addNeighbor(node2)
+activate Node1
+Node1 --> G
+deactivate Node1
+G --> User
+deactivate G
+@enduml

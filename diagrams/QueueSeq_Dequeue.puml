@@ -1,0 +1,18 @@
+@startuml
+actor User
+participant "Queue" as Q
+
+User -> Q : dequeue()
+activate Q
+
+alt If Queue is not empty
+    Q -> Q : remove front item
+    Q -> Q : shift items forward
+    Q -> Q : decrement currentAmount
+    Q --> User : return removed item
+else Queue is empty
+    Q --> User : return null
+end
+
+deactivate Q
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+actor User
+participant "Queue" as Q
+
+User -> Q : enqueue(name)
+activate Q
+
+alt If Queue is not full
+    Q -> Q : add item to queue
+    Q -> Q : increment currentAmount
+else Queue is full
+    Q -> Q : return error
+end
+
+deactivate Q
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+actor User
+participant "Passenger" as P
+
+' Update name information
+User -> P : setFirstName(newFirstName)
+activate P
+P -> P : formatName(newFirstName)
+P --> User
+deactivate P
+
+User -> P : setLastName(newLastName)
+activate P
+P -> P : formatName(newLastName)
+P --> User
+deactivate P
+
+' Update seat class and number
+User -> P : setSeatClass(newSeatClass)
+activate P
+P --> User
+deactivate P
+
+User -> P : setSeatWaitNumber(newSeatNumber)
+activate P
+P --> User
+deactivate P
+
+' Update wait list status
+User -> P : setIsWaitListed(newIsWaitListed)
+activate P
+P --> User
+deactivate P
+
+@enduml
+
