@@ -3,13 +3,12 @@ actor User
 participant "Main" as M
 participant "FileFolder" as FF
 
-User -> M : seatsComboBoxActionPerformed()
+User -> M : selectPassengerFromComboBox()
 activate M
 M -> FF : getFile(passengerName)
 activate FF
 FF --> M : Passenger
 deactivate FF
-M -> M : updatePassengerDetails(Passenger)
 M --> User : displayPassengerDetails()
 deactivate M
 @enduml

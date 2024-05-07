@@ -1,20 +1,16 @@
 @startuml
 actor User
 participant "Main" as M
-participant "JComboBox" as WaitComboBox
 participant "Flight" as F
 participant "FileFolder" as FF
-participant "Dialog" as D
 
-User -> WaitComboBox : selectWaitListPassenger()
-activate WaitComboBox
-WaitComboBox -> M : cancelWaitButtonActionPerformed()
+User -> M : cancelWaitButtonActionPerformed()
 activate M
 
 M -> F : getFlight(selectedFlightIndex)
 activate F
-F -> F : removePassengerFromWait(waitIndex)
-F --> M
+F --> M : selectedFlight
+M -> F : selectedFlight.removePassengerFromWait(waitIndex)
 deactivate F
 
 M -> FF : removeFile(waitPassengerDetails)

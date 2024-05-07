@@ -1,49 +1,15 @@
 @startuml
 actor User
-participant "JList" as FlightList
 participant "Main" as M
 participant "Flight" as F
-participant "JTextField" as FlightTextField
-participant "JTextField" as DepartureTextField
-participant "JTextField" as ArrivalTextField
-participant "JTextField" as DateTextField
 
-User -> FlightList : selectFlight()
-activate FlightList
-FlightList -> M : listFlightsValueChanged()
+User -> M : selectFlightFromList()
 activate M
-
-M -> FlightList : getSelectedIndex()
-FlightList -> M : selectedIndex
-deactivate FlightList
-
-M -> M : getFlight(selectedIndex)
-activate M
-M -> F : flights.get(index)
+M -> F : getFlightInfo(selectedFlightIndex)
 activate F
-F --> M : Flight
+F --> M : flightInfo
 deactivate F
-
-M -> FlightTextField : setText(Flight.getNumber())
-activate FlightTextField
-FlightTextField --> M
-deactivate FlightTextField
-
-M -> DepartureTextField : setText(Flight.getDeparture())
-activate DepartureTextField
-DepartureTextField --> M
-deactivate DepartureTextField
-
-M -> ArrivalTextField : setText(Flight.getArrival())
-activate ArrivalTextField
-ArrivalTextField --> M
-deactivate ArrivalTextField
-
-M -> DateTextField : setText(Flight.getDepartureDate().toString())
-activate DateTextField
-DateTextField --> M
-deactivate DateTextField
-
+M --> User : displayFlightInfo()
 deactivate M
 @enduml
 

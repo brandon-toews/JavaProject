@@ -2,7 +2,6 @@
 actor User
 participant "Main" as M
 participant "Flight" as F
-participant "Dialog" as D
 participant "FileFolder" as FF
 participant "Passenger" as P
 
@@ -20,18 +19,17 @@ F --> M : availableSeats
 deactivate F
 
 alt if availableSeats is not empty
-    M -> D : showAvailableSeatsDialog(availableSeats)
-    activate D
-    D -> M : selectedSeat
-    deactivate D
+    M -> User : showAvailableSeatsDialog(availableSeats)
+    User -> M : selectedSeat
     M -> F : addPassengerToSeat(selectedSeat)
     activate F
     F --> M
     deactivate F
     M -> P : new Passenger(details)
     activate P
-    P --> M
-    M -> FF : addFile(P)
+    P --> M : Passenger
+    deactivate P
+    M -> FF : addFile(Passenger)
     activate FF
     FF --> M
     deactivate FF
@@ -42,10 +40,8 @@ else
     deactivate F
 
     alt if waitListStatus is not full
-        M -> D : showWaitListDialog()
-        activate D
-        D -> M : userDecision
-        deactivate D
+        M -> User : showWaitListDialog()
+        User -> M : userDecision
         alt if userDecision is Yes
             M -> F : addPassengerToWaitList()
             activate F
@@ -53,19 +49,17 @@ else
             deactivate F
             M -> P : new Passenger(details)
             activate P
-            P --> M
-            M -> FF : addFile(P)
+            P --> M : Passenger
+            deactivate P
+            M -> FF : addFile(Passenger)
             activate FF
             FF --> M
             deactivate FF
         else
-            M --> User : displayNoActionTaken()
+            M --> User : noActionTaken()
         end
     else
-        M -> D : showFullWaitListMessage()
-        activate D
-        D --> User
-        deactivate D
+        M -> User : showFullWaitListMessage()
     end
 end
 

@@ -1,28 +1,37 @@
-@startuml
-class FileFolder {
-    -HashMap<String, ArrayList<Passenger>> folders
+@startuml FileFolderClassDiagram
 
-    +addFile(Passenger)
-    +getFile(String, int, Flight.SeatClass, int, boolean) : Passenger
-    +removeFile(String, int, Flight.SeatClass, int, boolean)
-    -insertionSortFolder(ArrayList<Passenger>)
-    -searchFolder(ArrayList<Passenger>, String, int, Flight.SeatClass, int, boolean) : Passenger
-    -binarySearchFolder(ArrayList<Passenger>, String, String) : String[]
-    -searchFolderRemoveFile(ArrayList<Passenger>, String, int, Flight.SeatClass, int, boolean)
+class FileFolder {
+    -folders : HashMap<String, ArrayList<Passenger>>
+    +FileFolder()
+    +addFile(newPassenger : Passenger) : void
+    +getFile(passengerName : String, flightNumber : int, seatClass : Flight.SeatClass, seatNumber : int, isWaitListed : boolean) : Passenger
+    +getFiles(firstName : String, lastName : String) : String[]
+    +removeFile(passengerName : String, flightNumber : int, seatClass : Flight.SeatClass, seatNumber : int, isWaitListed : boolean) : void
+    -insertionSortFolder(folder : ArrayList<Passenger>) : void
+    -searchFolder(folder : ArrayList<Passenger>, passengerName : String, flightNumber : int, seatClass : Flight.SeatClass, seatNumber : int, isWaitListed : boolean) : Passenger
+    -binarySearchFolder(folder : ArrayList<Passenger>, firstName : String, lastName : String) : ArrayList<Passenger>
+    -searchFolderRemoveFile(folder : ArrayList<Passenger>, passengerName : String, flightNumber : int, seatClass : Flight.SeatClass, seatNumber : int, isWaitListed : boolean) : void
 }
 
 class Passenger {
-    +String getFullName()
-    +String getFirstName()
-    +String getLastName()
-    +int getFlightNumber()
-    +Flight.SeatClass getSeatClass()
-    +int getSeatWaitNumber()
-    +boolean getIsWaitListed()
+    -firstName : String
+    -lastName : String
+    -passportNumber : String
+    -flightNumber : int
+    -seatClass : Flight.SeatClass
+    -seatWaitNumber : int
+    -isWaitListed : boolean
+    +getFullName() : String
+    +getFirstName() : String
+    +getLastName() : String
+    +getPassport() : String
+    +getFlightNumber() : int
+    +getSeatClass() : Flight.SeatClass
+    +getSeatWaitNumber() : int
+    +getIsWaitListed() : boolean
 }
 
-class Flight {
-    enum SeatClass { ECONOMY, BUSINESS, FIRST }
-}
-FileFolder "1" -- "many" Passenger : contains
+FileFolder "1" -- "*" Passenger : contains
+
 @enduml
+

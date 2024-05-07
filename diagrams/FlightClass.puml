@@ -1,21 +1,44 @@
 @startuml
 class Flight {
-    - int number
-    - String departure
-    - String arrival
-    - LocalDate departureDate
-    - HashMap<Integer, String> firstClassSeats
-    - HashMap<Integer, String> businessClassSeats
-    - HashMap<Integer, String> economyClassSeats
-    - Queue firstWaitList
-    - Queue businessWaitList
-    - Queue economyWaitList
-
-    + addPassenger(seatClass : SeatClass, seatNumber : int, name : String) : void
-    + removePassenger(seatClass : SeatClass, seatNumber : int) : void
-    + addPassengerToWait(seatClass : SeatClass, name : String) : void
-    + removePassengerFromWait(seatClass : SeatClass, waitNumber : int) : void
-    + getSeats(seatClass : SeatClass) : HashMap<Integer, String>
-    + getWaitList(seatClass : SeatClass) : Queue
+  - number : int
+  - departure : String
+  - departureDate : LocalDate
+  - arrival : String
+  - firstClass : HashMap<Integer, String>
+  - businessClass : HashMap<Integer, String>
+  - economyClass : HashMap<Integer, String>
+  - firstWait : Queue
+  - businessWait : Queue
+  - economyWait : Queue
+  + Flight(num : int, departure : String, arrival : String, date : LocalDate)
+  + AddPassenger(seatClass : SeatClass, seatNumber : int, name : String) : void
+  + AddPassengerToWait(seatClass : SeatClass, waitNumber : int, name : String) : void
+  + RemovePassenger(seatClass : SeatClass, seatNumber : int) : void
+  + movePassengerFromWaitToSeat(seatClass : SeatClass, seatNumber : int) : void
+  + RemovePassengerFromWait(seatClass : SeatClass, waitNumber : int) : void
+  + setFirstClass(index : int, passenger : String) : void
+  + setBusinessClass(index : int, passenger : String) : void
+  + setEconomyClass(index : int, passenger : String) : void
+  + getSeats(seatClass : SeatClass) : HashMap<Integer, String>
+  + getWait(seatClass : SeatClass) : Queue
 }
+
+enum SeatClass {
+  First
+  Business
+  Economy
+}
+
+class Queue {
+  - capacity : int
+  - items : List<String>
+  + Queue(capacity : int)
+  + enqueue(item : String) : void
+  + dequeue() : String
+  + popItem(index : int) : void
+}
+
+Flight *-- "many" Queue : waitLists
+Flight *-- "many" HashMap : seatMaps
 @enduml
+
